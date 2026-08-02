@@ -70,7 +70,7 @@ jobs:
           test -f dist/404.html        || { echo "::error::dist/404.html missing"; exit 1; }
           test -f dist/CNAME           || { echo "::error::dist/CNAME missing — custom domain would be dropped"; exit 1; }
           test -f dist/robots.txt      || { echo "::error::dist/robots.txt missing"; exit 1; }
-          test -f dist/sitemap-index.xml || { echo "::error::sitemap missing"; exit 1; }
+          test -f dist/sitemap.xml || { echo "::error::sitemap missing"; exit 1; }
           test -f dist/rss.xml         || { echo "::error::rss.xml missing"; exit 1; }
           test -d dist/tools           || { echo "::error::tool directory missing"; exit 1; }
           test -d dist/agents          || { echo "::error::agent directory missing"; exit 1; }

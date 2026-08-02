@@ -146,7 +146,7 @@ Implemented and wired to the config, not hardcoded:
   `SoftwareApplication` for directory entries, `HowTo` for prompts
 - `robots.txt` with explicit allow rules for AI crawlers (GPTBot, ClaudeBot,
   PerplexityBot and others) — citation in AI answers is a distribution channel
-- `sitemap-index.xml` with per-surface priorities
+- `/sitemap.xml` — a flat urlset with real per-item `lastmod` dates and per-surface priorities
 - RSS feed at `/rss.xml`
 - Internal linking through categories, tags, related articles and the resources hub
 
