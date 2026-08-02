@@ -91,6 +91,7 @@ const crumbs = [
       updatedDate: data.updatedDate,
       author,
       category,
+      categoryUrl: `/category/${category.slug}/`,
       tags: data.tags,
       image: ogImage,
       wordCount,
@@ -125,7 +126,13 @@ const crumbs = [
             {data.title}
           </h1>
 
-          <p class="mt-4 max-w-3xl text-lg leading-relaxed text-[var(--text-muted)]">
+          {/* `lede` is targeted by the speakable schema — voice assistants and
+              AI answer engines read this paragraph as the article summary, so
+              it must stay a single self-contained answer. */}
+          <p
+            class="lede mt-4 max-w-3xl text-lg leading-relaxed text-[var(--text-muted)]"
+            data-speakable
+          >
             {data.description}
           </p>
 

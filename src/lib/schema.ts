@@ -163,6 +163,8 @@ export function articleSchema(opts: {
   updatedDate?: Date;
   author: Author;
   category: Category;
+  /** Root-relative URL of the category archive, used for entity linking. */
+  categoryUrl?: string;
   tags: string[];
   image: string;
   wordCount?: number;
@@ -195,6 +197,27 @@ export function articleSchema(opts: {
     keywords: opts.tags.join(', '),
     inLanguage: SITE.language,
     ...(opts.wordCount && { wordCount: opts.wordCount }),
+    // `speakable` marks the passages a voice or AI assistant should read as the
+    // summary. Pointing it at the lede and H1 keeps the extracted answer the
+    // one we wrote deliberately, rather than whatever the model picks.
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['h1', '.lede'],
+    },
+    // Entity linking. `about` names the primary topic and `mentions` the
+    // secondary ones, which is how a topic gets resolved to a known entity
+    // rather than treated as a loose keyword.
+    about: {
+      '@type': 'Thing',
+      name: opts.category.name,
+      ...(opts.categoryUrl && { url: abs(opts.categoryUrl) }),
+    },
+    ...(opts.tags.length && {
+      mentions: opts.tags.slice(0, 10).map((tag) => ({
+        '@type': 'Thing',
+        name: tag.replace(/-/g, ' '),
+      })),
+    }),
     image: {
       '@type': 'ImageObject',
       url: abs(opts.image),
