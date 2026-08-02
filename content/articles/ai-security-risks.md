@@ -9,7 +9,7 @@ category: ai-security
 tags: ["ai-security", "prompt-injection", "ai-agents", "mcp", "llm-security", "data-privacy"]
 type: analysis
 publishDate: 2026-07-08
-updatedDate: 2026-07-30
+updatedDate: 2026-08-02
 featured: false
 editorsPick: true
 trending: true
@@ -37,9 +37,9 @@ The security model of an LLM application differs from a web application's in one
 
 That single property generates most of the risk classes below. This is defensive material: it describes what goes wrong and what reduces it, without providing attack tooling.
 
-## The structural problem
+## Why is AI security different from application security?
 
-Traditional application security depends on separating code from input. Parameterized SQL queries work because the database is told, structurally, which part is the query and which part is the value. There is no equivalent construct for a language model.
+Because there is no reliable boundary between instructions and data. Traditional application security depends on separating code from input: parameterized SQL queries work because the database is told, structurally, which part is the query and which part is the value. There is no equivalent construct for a language model, which sees every input as the same kind of token.
 
 Techniques exist to signal provenance — delimiters, role tags, instruction hierarchies that train models to weight system instructions above retrieved content — and they measurably raise the cost of an attack. None of them is a boundary in the sense that a prepared statement is a boundary. Treat them as defense in depth, not as a fix.
 
@@ -61,15 +61,17 @@ Three properties make it dangerous. The attacker never touches your application,
 
 Indirect injection is why an agent that both reads untrusted content and holds meaningful credentials is a fundamentally risky configuration, independent of how well it is prompted.
 
-### What actually reduces it
+### What actually reduces prompt injection?
+
+Two architectural patterns reduce prompt injection more than any change of wording: provenance tracking and structural separation. Tag content by trust level as it enters context and make tool permissions depend on that tag, or process untrusted content in a session with no tool access at all and pass only a validated summary into the privileged session.
 
 Provenance tracking helps: tag content by trust level as it enters context, and make tool permissions depend on that tag. If a session has ingested untrusted external content, downgrade what it can do afterwards — a pattern sometimes described as taint tracking for context.
 
 Structural separation helps: process untrusted content in a session that has no tool access at all, and pass only a validated, schema-constrained summary into the privileged session. The untrusted text never meets the credentials.
 
-## Data exfiltration through tool use
+## How does data get exfiltrated through tool use?
 
-Exfiltration is where injection converts into loss. A model cannot leak data on its own; it needs an outbound channel, and tools are the channel.
+Exfiltration is where injection converts into loss. A model cannot leak data on its own; it needs an outbound channel, and tools are the channel — network fetch, rendered markdown images and links, write-capable integrations such as email or ticket creation, and any code execution sandbox with network egress.
 
 The channels that matter in practice:
 
@@ -80,17 +82,19 @@ The channels that matter in practice:
 
 The controls are unglamorous and effective. Deny network egress by default in execution sandboxes and allowlist the specific hosts a workload needs. Strip or refuse to auto-load remote images in rendered model output. Constrain URL-fetching tools to an allowlist rather than the open internet. Log every outbound call with its full argument set so an incident can be reconstructed.
 
-## The agent blast radius problem
+## What is agent blast radius?
+
+Blast radius is the set of everything an agent can reach when something goes wrong. It is defined by three things: the credentials it holds, the tools it can call, and how many steps it can take without a human checkpoint. Most organizations size all three for convenience during a pilot and never revisit them when the pilot becomes production.
 
 A chat model that answers wrongly produces a wrong answer. An agent that reasons wrongly takes actions — and it takes them at machine speed, in sequence, before anyone reads a log line.
-
-Blast radius is the set of everything an agent can reach. It is defined by three things: the credentials it holds, the tools it can call, and how many steps it can take without a human checkpoint. Most organizations size all three for convenience during a pilot and never revisit them when the pilot becomes production.
 
 Two failure modes deserve separate attention.
 
 **Compounding error.** Multi-step autonomy multiplies small failure probabilities. A step that is reliable in isolation becomes unreliable across a long chain, and an early misunderstanding propagates into every subsequent action.
 
 **Confused deputy.** The agent is a trusted component acting for a less-trusted requester. If it does not carry the requester's authorization down into each tool call, it will happily perform actions the requester could never perform directly. Agent identity should be distinct from user identity, and tool calls should be authorized against the *user's* permissions, not the agent's service account.
+
+### How do you size an agent's permissions?
 
 Practical sizing rules: separate credentials per agent, scoped to the narrowest task; read and write separated into different tools with different permissions; a hard step limit with escalation to a human on exceeding it; and mandatory approval on anything irreversible — payments, deletions, external communications, permission changes, production deploys.
 
@@ -104,9 +108,9 @@ Downloading weights from a public hub is a supply chain decision. Risks include 
 
 Reasonable hygiene: prefer safe tensor serialization formats over pickle-based ones, pin to specific commits rather than moving tags, verify checksums, mirror approved weights into internal storage, and evaluate a model on your own held-out set before it reaches production.
 
-### MCP servers
+### Are MCP servers a security risk?
 
-The Model Context Protocol standardizes how tools and data reach an agent, and its adoption has been fast enough that server ecosystems now resemble early package registries — abundant, useful and largely unreviewed.
+Yes. An MCP server is third-party code that runs with your credentials and can inject text straight into a model's context, which puts it in the same class as a dependency with production access. The Model Context Protocol standardizes how tools and data reach an agent, and its adoption has been fast enough that server ecosystems now resemble early package registries — abundant, useful and largely unreviewed.
 
 An MCP server occupies an unusually privileged position. It runs locally or in your infrastructure, it typically holds API credentials for the system it fronts, and its tool descriptions and outputs are injected directly into the model's context. That last property is the one teams miss: a malicious or compromised server can influence agent behavior through the text it returns, not just through the actions it performs.
 
@@ -122,9 +126,9 @@ For your own fine-tuning and retrieval systems the risk is more immediate and mo
 
 Controls: curate and version fine-tuning datasets with provenance metadata, apply anomaly detection to training data, hold out a clean evaluation set that never enters training, and gate the ingestion path into retrieval indexes with the same scrutiny you would apply to code.
 
-## PII leakage
+## How does personal data leak from AI systems?
 
-Personal data escapes AI systems through more paths than most threat models account for:
+Personal data escapes AI systems through five paths that most threat models miss: whole records pasted into prompts when a few fields would do, retrieval that ignores per-user access control, prompt and completion logs kept for debugging, persistent memory carrying information between sessions, and consumer-tier terms that permit training on submitted content. Each one, in detail:
 
 - **Prompt inclusion.** Full records pasted into context when three fields would do.
 - **Retrieval over-scope.** An index that ignores per-user access control, so a query surfaces documents the requester cannot legitimately see.
@@ -134,7 +138,9 @@ Personal data escapes AI systems through more paths than most threat models acco
 
 Minimization is the highest-leverage control. Most prompts contain far more personal data than the task requires; passing an identifier and a small set of fields instead of a whole record removes the exposure rather than protecting it. After that: enforce authorization at retrieval time rather than filtering afterward, redact before logging, set aggressive log retention, and confirm the data-use terms of every tier you deploy on. Consumer and enterprise tiers of the same product frequently differ on this point.
 
-## The controls that actually help
+## Which AI security controls actually help?
+
+Least privilege, allowlisting, scarce approval gates and sandboxing carry most of the weight. Every risk class below has one primary control that removes the capability an attacker needs, plus supporting controls that raise the cost of reaching it. The table maps risk to control; the four principles underneath explain why these particular ones do the work.
 
 | Risk | Primary control | Supporting controls |
 |---|---|---|
@@ -147,7 +153,9 @@ Minimization is the highest-leverage control. Most prompts contain far more pers
 | PII leakage | Data minimization before context assembly | Authorization enforced at retrieval, redaction before logging, short retention, enterprise data terms |
 | Excessive autonomy | Human approval on irreversible operations | Simulation or dry-run mode, transaction limits, staged rollout |
 
-Four principles run through that table.
+### Four principles behind the table
+
+Four principles run through that table. Least privilege is the load-bearing control, allowlisting beats denylisting, approval gates only work when they are scarce, and sandboxing bounds the failures nobody anticipated.
 
 **Least privilege is the load-bearing control.** Most real incidents are authorization failures wearing an AI costume. If the agent could not have done the damaging thing, the injection does not matter.
 

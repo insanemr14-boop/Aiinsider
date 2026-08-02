@@ -9,7 +9,7 @@ category: mcp
 tags: ["mcp", "ai-agents", "ai-apis", "anthropic", "developer-tools", "llms"]
 type: analysis
 publishDate: 2026-07-21
-updatedDate: 2026-08-01
+updatedDate: 2026-08-02
 featured: false
 editorsPick: true
 trending: false
@@ -37,19 +37,17 @@ The Model Context Protocol is an open standard for connecting AI applications to
 
 Anthropic published MCP in late 2024. Adoption spread beyond Anthropic's own products quickly, including to other major model vendors, which is the outcome that turns a protocol into a standard.
 
-## The N×M problem
+## What problem does MCP solve?
 
-Every AI application needs access to the same things: files, databases, issue trackers, documentation, internal APIs. Every one of those systems needs a wrapper that describes it to a model and executes calls against it.
+Without a standard, connecting M AI applications to N data sources means M times N bespoke integrations. Each is written separately, maintained separately, and breaks separately. MCP collapses this to M plus N. Write one Jira server; every MCP-capable host can use it. Write one client implementation in your application; every MCP server becomes available to it.
 
-Without a standard, that means M applications times N data sources bespoke integrations. Each is written separately, maintained separately, and breaks separately. Your Jira integration for one assistant does nothing for another.
-
-MCP collapses this to M plus N. Write one Jira server; every MCP-capable host can use it. Write one client implementation in your application; every MCP server becomes available to it.
+The redundancy it removes is easy to underestimate. Every AI application needs access to the same things: files, databases, issue trackers, documentation, internal APIs. Every one of those systems needs a wrapper that describes it to a model and executes calls against it. Your Jira integration for one assistant does nothing for another.
 
 This is not a novel insight. The Language Server Protocol did exactly this for editors and language tooling, replacing a quadratic integration matrix with a linear one, and it won. MCP is the same bet applied to AI applications.
 
-## Architecture: hosts, clients, and servers
+## How is an MCP connection structured?
 
-Three roles, and the distinction between the first two trips people up.
+Three roles. The host is the AI application the user interacts with, a client is a connector inside the host holding a one-to-one stateful connection with exactly one server, and a server is a program exposing capabilities over the protocol. The distinction between the first two trips people up.
 
 **Host.** The AI application the user interacts with — a desktop assistant, an IDE, a coding agent, an internal tool. The host manages the model, the conversation, and the user's trust decisions.
 
@@ -61,9 +59,9 @@ The important consequence of this design is that servers never talk to the model
 
 Communication uses JSON-RPC 2.0 for requests, responses, and notifications.
 
-## The three server primitives
+## What are the three MCP primitives?
 
-MCP servers expose three kinds of capability, distinguished by who decides when they are used.
+Tools, resources, and prompts. MCP servers expose these three kinds of capability, distinguished by who decides when they are used: tools are executable functions the model chooses to call, resources are read-only data the host application loads into context, and prompts are reusable templates the user invokes deliberately. Mapping your capabilities onto the right one is the main design decision when writing a server.
 
 ### Tools — model-controlled
 
@@ -95,9 +93,9 @@ This is the least used primitive and the most underrated. It lets a server ship 
 
 There are also client-side primitives that flow the other direction: sampling lets a server request a model completion through the client, roots let the client tell a server which filesystem or URI boundaries it may operate within, and elicitation lets a server request additional input from the user. Support for these varies by host.
 
-## Transports
+## Should you use stdio or HTTP?
 
-MCP defines how messages move separately from what they mean.
+Use stdio for local tools and streamable HTTP for anything shared, remote or hosted. The two differ mainly in trust: with stdio the process boundary is the trust boundary, so no authentication layer is needed, while an HTTP server is reachable over a network and requires real authorization. MCP defines how messages move separately from what they mean.
 
 **stdio.** The host launches the server as a subprocess and exchanges newline-delimited JSON-RPC messages over standard input and output. There is no network, no port, and no authentication layer, because the process boundary is the trust boundary — the server runs as the user who launched it, with that user's permissions.
 
@@ -196,15 +194,17 @@ A host registers the server through configuration:
 }
 ```
 
-## Security considerations
+## Is MCP secure?
 
-MCP hands models the ability to act on real systems. The protocol gives you a framework; the trust decisions are yours.
+The protocol gives you a framework; the trust decisions are yours. MCP hands models the ability to act on real systems, and the main exposures are prompt injection through tool content and tool descriptions, over-broad credentials handed to servers, and third-party servers running against sensitive systems. Treat an MCP server like any dependency with production access.
 
 **Prompt injection through tool content.** Anything a tool returns enters the model's context. If a tool fetches a web page, reads an email, or queries a user-writable database, an attacker who controls that content can attempt to issue instructions to the model. This is an actively exploited class of vulnerability, not a theoretical one. Treat all tool output as untrusted input.
 
 **Malicious tool descriptions.** Descriptions are also model-visible text. A hostile server can embed instructions in a description. This is why installing a third-party MCP server is equivalent to installing a dependency with production access — read the code or do not run it.
 
 **Over-broad credentials.** A server given a database connection string can do anything that connection permits. Provision least-privilege credentials scoped to what the server actually needs, and prefer read-only wherever possible.
+
+### Identity and authorization risks
 
 **The confused deputy problem.** A server holding credentials on behalf of a user can be induced to act with those credentials on someone else's instruction. Verify that the requesting identity is authorized for each action rather than assuming the connection implies authority.
 
@@ -214,11 +214,11 @@ MCP hands models the ability to act on real systems. The protocol gives you a fr
 
 Our broader coverage of [AI security risks](/articles/ai-security-risks/) goes deeper on the injection surface.
 
-## When to use MCP, and when not to
+## When should you use MCP, and when should you skip it?
 
-Use MCP when an integration will be consumed by more than one application, shared across teams, or maintained on a different schedule than the app using it. Portability is the value.
+Use MCP when an integration will be consumed by more than one application, shared across teams, or maintained on a different schedule than the app using it. Portability is the value, not capability. Skip it when you have one application with a fixed set of tools and no plans to reuse them anywhere else.
 
-Skip it when you have one application with a fixed set of tools and no plans to reuse them. Direct function calling against a model API is fewer moving parts and easier to debug. A protocol you do not need is a layer of indirection you have to maintain.
+The reason to skip it in that case is cost of indirection. Direct function calling against a model API is fewer moving parts and easier to debug. A protocol you do not need is a layer of indirection you have to maintain.
 
 MCP is also not a retrieval system. It is transport and interface. If your problem is finding the right document among a million, you still need [retrieval-augmented generation](/articles/what-is-rag/) — MCP is how the agent reaches your retrieval service, not the retrieval itself.
 

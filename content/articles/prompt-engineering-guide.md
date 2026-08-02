@@ -9,7 +9,7 @@ category: prompt-engineering
 tags: ["prompt-engineering", "llms", "ai-engineering", "structured-outputs", "evaluation"]
 type: guide
 publishDate: 2026-06-18
-updatedDate: 2026-07-26
+updatedDate: 2026-08-02
 featured: true
 editorsPick: false
 trending: true
@@ -37,9 +37,9 @@ Prompt engineering is specification writing. The model is a capable, literal con
 
 This guide covers the structure that reliably works, the techniques that are overrated, and — the part most teams skip — how to test prompts so that changing one does not silently break something else.
 
-## Why structure matters
+## Why does prompt structure matter?
 
-The model sees a single stream of tokens. It has no separate channel for "instructions" versus "data," and no memory of what you meant. Every distinction you care about has to be visible in the text.
+The model sees a single stream of tokens. It has no separate channel for "instructions" versus "data," and no memory of what you meant. Every distinction you care about has to be visible in the text — which is why clear section delimiters, headers and consistent labeling measurably improve instruction adherence.
 
 Three consequences follow.
 
@@ -51,9 +51,9 @@ Three consequences follow.
 
 The practical version: write prompts as documents with sections, not as paragraphs.
 
-## The decomposition that works
+## How should you structure a prompt?
 
-Break every non-trivial prompt into five parts.
+Break every non-trivial prompt into five parts — role, context, task, format and constraints — and write it as a document with sections rather than a paragraph. Length is not the point. The point is that every decision the model would otherwise make silently, including the edge cases, is specified somewhere in the text.
 
 1. **Role** — who the model is acting as, stated only when it changes behavior meaningfully.
 2. **Context** — background, data and constraints of the situation.
@@ -112,7 +112,9 @@ Note the instruction placement: the email arrives last, after the instructions, 
 
 "You are a world-class expert" does very little. What helps is a role that carries actual constraints — "You are a technical editor who removes claims not supported by the source text" tells the model what to *do*. Prefer describing behavior over asserting expertise.
 
-## Few-shot examples
+## How many few-shot examples should you include?
+
+Three to five is the usual sweet spot, and returns fall off quickly beyond about eight. Diversity matters more than volume: cover the different shapes of input rather than five variations of the easy case, and always include an edge case and a negative case that produces an empty result.
 
 Examples communicate what instructions cannot: tone, edge case handling, the exact degree of terseness you want. They are the highest-leverage addition to most prompts.
 
@@ -157,7 +159,7 @@ Rules that hold up in practice:
 - **Order matters, mildly.** Models weight later examples slightly more. Keep the ordering fixed so results are reproducible.
 - **Examples must be correct.** A single mislabeled example does more damage than three good ones do good.
 
-## Chain-of-thought and its limits
+## Does chain-of-thought prompting still help?
 
 Asking a general-purpose model to work through a problem step by step before answering improves accuracy on tasks with genuine intermediate structure: multi-step arithmetic, constraint satisfaction, logical deduction, planning. The mechanism is straightforward — generated tokens are the model's working memory, and forcing it to produce intermediate steps gives it more computation to spend.
 
@@ -172,6 +174,8 @@ Four limits deserve equal attention.
 **It is redundant on reasoning models.** Models that perform extended internal reasoning before answering already do this. Adding "think step by step" to such a model wastes tokens and, in some cases, degrades output by interfering with the trained pattern. The relevant control on those models is a reasoning effort setting, not a prompt instruction. This is one of the clearest differences between model families, and it shows up when comparing assistants — see [Claude vs ChatGPT](/articles/claude-vs-chatgpt/) for how those behaviors diverge.
 
 The current guidance: use structured decomposition for genuinely multi-step tasks on standard models, skip it elsewhere, and let reasoning models do their own reasoning.
+
+### Name the steps instead of asking for them
 
 ```text
 BEFORE
@@ -194,11 +198,11 @@ State the final quantity on its own line as: REORDER: <n>
 
 The improvement here is not the phrase "step by step." It is that the steps are *named*, so the model cannot invent its own method and you can inspect which step went wrong.
 
-## Structured output
+## How do you get reliable JSON from a model?
 
-Asking for JSON in the prompt text produces JSON most of the time. Most of the time is not a parsing contract.
+Use your provider's structured output or constrained decoding feature with an explicit schema, rather than asking for JSON in the prompt text. These restrict token selection during generation so the output conforms to a schema by construction. Malformed JSON, missing fields and invented enum values become impossible rather than rare.
 
-Use your provider's structured output or constrained decoding feature. These restrict token selection during generation so the output conforms to a schema by construction. Malformed JSON, missing fields and invented enum values become impossible rather than rare.
+Asking for JSON in the prompt text produces JSON most of the time. Most of the time is not a parsing contract, and that is the whole argument for constrained decoding.
 
 ```python
 from pydantic import BaseModel
@@ -231,9 +235,9 @@ Schema design guidance that matters as much as the mechanism:
 
 That last point is subtle and frequently reversed by accident.
 
-## System prompts
+## What goes in the system prompt?
 
-The system prompt carries what is true for every request: role, domain constraints, output format, tone, safety rules, available tools. The user turn carries the specific request and per-request data.
+The system prompt carries what is true for every request: role, domain constraints, output format, tone, safety rules, available tools. The user turn carries the specific request and per-request data. Three things make that split matter — caching of the stable prefix, precedence when instructions conflict, and the trust boundary between your instructions and untrusted input.
 
 Three reasons the split matters.
 
@@ -258,9 +262,9 @@ This reduces prompt injection risk without eliminating it. No prompt-level defen
 
 Keep system prompts as short as they can be while covering the durable behavior. Long system prompts accumulate contradictory rules over time, and contradictory rules produce inconsistent behavior that is very hard to debug.
 
-## Evaluating and regression testing prompts
+## How do you test prompts?
 
-This is the step that separates prompts that work in a demo from prompts that work in production.
+Build a golden set of representative inputs with expected outputs or assertions, run the prompt against all of them, record a score, and rerun the suite on every prompt or model change — exactly as you would with unit tests. This is the step that separates prompts that work in a demo from prompts that work in production.
 
 ### Build a golden set
 

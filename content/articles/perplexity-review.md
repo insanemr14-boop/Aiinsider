@@ -9,7 +9,7 @@ category: perplexity
 tags: ["perplexity", "ai-search", "answer-engine", "research-tools", "ai-tools", "productivity"]
 type: review
 publishDate: 2026-06-27
-updatedDate: 2026-07-24
+updatedDate: 2026-08-02
 featured: false
 editorsPick: false
 trending: false
@@ -37,7 +37,9 @@ Perplexity is an answer engine: it searches the web, reads the results, and retu
 
 This review covers what an answer engine actually is, how good the citations are, the deep research mode, Spaces, model selection, tier structure, and the specific queries where it beats and loses to conventional search.
 
-## What an answer engine is
+## What is an answer engine?
+
+An answer engine searches the web, reads the retrieved pages, and returns a synthesized answer with inline citations at the claim level. It sits between a traditional search engine, which returns ranked links and leaves synthesis to you, and a chatbot, which answers from parameters compressed during training. The generation step is constrained by retrieved text rather than by memory.
 
 Traditional search returns ranked links and leaves synthesis to you. That is a good design when you want to evaluate sources yourself, and a poor one when your question spans five pages and you have to reconcile them by hand.
 
@@ -47,9 +49,9 @@ An answer engine does search first, then generation, and shows its work. The pip
 
 That constraint is the whole product. It does not eliminate error — the model can still misread a source, and the source can still be wrong — but it changes the failure mode from unverifiable to checkable, and checkable is a much better place to be.
 
-## Citation quality, honestly assessed
+## Are Perplexity's citations trustworthy?
 
-Citations are the thing Perplexity is bought for, so they deserve the closest scrutiny.
+Mostly, with three caveats. The links are real, they point at pages the system actually retrieved, and they are numbered inline so you can see which sentence rests on which source. What they do not guarantee is that the marker supports the exact adjacent claim, that the cited source is any good, or that the synthesis kept the caveats. Citations are the thing Perplexity is bought for, so they deserve the closest scrutiny.
 
 **What works.** The links are real. That sounds like a low bar until you remember that general chatbots asked for references have a documented habit of producing plausible-looking URLs and paper titles that do not exist. Perplexity cites pages it actually retrieved, numbered inline so you can see which sentence rests on which source. Hovering shows the source before you commit to a click.
 
@@ -72,7 +74,7 @@ The workflow that keeps the benefit while managing the risk:
 
 Step three is non-negotiable for professional work. The tool's value is that it makes verification cheap, not that it makes verification unnecessary.
 
-## Deep research mode
+## What is deep research mode?
 
 The deep research mode is a different product inside the same interface. Instead of one search and one answer, it runs an extended agentic loop: decompose the question, issue many queries, read a large number of sources, notice gaps, search again, then write a long structured report with citations throughout.
 
@@ -84,25 +86,27 @@ It takes minutes rather than seconds. What comes back reads like a decent junior
 
 The right mental model is a first pass that saves you two hours of tab-opening, not a finished deliverable. Treat it as raw material.
 
-## Spaces, threads and follow-ups
+## What are Spaces in Perplexity?
 
-Perplexity's interaction model is threaded. Follow-up questions carry context, so you can start broad and narrow without re-explaining, and the suggested follow-ups are unusually good at surfacing the question you did not know to ask.
+Spaces are persistent project workspaces. A Space holds related threads, uploaded files and custom instructions — you can tell it to always prioritize primary sources, always answer in a particular structure, or restrict itself to specific domains. You can also upload your own documents and have the model reason across your files and the live web in the same answer.
 
-Spaces extend that into persistent project workspaces. A Space holds related threads, uploaded files and custom instructions — you can tell it to always prioritize primary sources, always answer in a particular structure, or restrict itself to specific domains. You can also upload your own documents and have the model reason across your files and the live web in the same answer.
+They extend an interaction model that is already threaded. Follow-up questions carry context, so you can start broad and narrow without re-explaining, and the suggested follow-ups are unusually good at surfacing the question you did not know to ask.
 
 This is the feature that separates Perplexity from a search box. Long-running research — evaluating vendors, tracking a regulatory process, building competitive intelligence — stays coherent instead of fragmenting into fifty unrelated searches you cannot find again.
 
 The limitations are real. Organization inside a Space is basic, there is no meaningful tagging or hierarchy, and export options are thinner than a serious research workflow wants. It is a good scratchpad, not a knowledge base.
 
-## Model selection
+## Does the model you pick matter?
 
-Paid tiers let you choose which underlying model answers, including options from multiple frontier labs and a reasoning-focused mode. The retrieval layer stays the same; you are swapping the synthesis engine.
+Moderately. Paid tiers let you choose which underlying model answers, including options from multiple frontier labs and a reasoning-focused mode, but the retrieval layer stays the same — you are swapping only the synthesis engine. For straightforward factual questions retrieval quality dominates and the choice barely registers.
 
-Does it matter? Moderately. For straightforward factual questions the retrieval quality dominates and the model choice barely registers. For questions that require reasoning over retrieved material — reconciling contradictory sources, assessing an argument, drawing out implications — the difference is noticeable, and a reasoning-oriented model is worth the extra latency.
+Where it shows up is reasoning. For questions that require reasoning over retrieved material — reconciling contradictory sources, assessing an argument, drawing out implications — the difference is noticeable, and a reasoning-oriented model is worth the extra latency.
 
 The genuinely useful side effect is comparison. Running the same question through two different models and seeing where they diverge is a fast way to find the parts of a topic that are actually contested. If you want the underlying model differences, our [Gemini vs Claude](/articles/gemini-vs-claude/) comparison covers them directly.
 
-## Free versus paid
+## Is Perplexity Pro worth paying for?
+
+The paid tier is worth it if you run several substantive research questions a day. It is not worth it for occasional lookups, and the free tier is honest enough that you can determine which you are within a week.
 
 Tiers rather than figures, since pricing changes:
 
@@ -111,8 +115,6 @@ Tiers rather than figures, since pricing changes:
 **Paid individual (Pro).** A much larger daily allowance of advanced searches, model selection, deep research at higher volume, file uploads and full use of Spaces. This is the tier the product is designed around.
 
 **Enterprise.** Administrative controls, single sign-on, data handling commitments and internal document connectors. Bought for governance reasons more than capability reasons.
-
-The paid tier is worth it if you run several substantive research questions a day. It is not worth it for occasional lookups, and the free tier is honest enough that you can determine which you are within a week.
 
 One thing to check for professional use: how your queries and uploaded documents are handled and retained. Consumer and enterprise tiers of AI products commonly differ on data use, and if you are pasting confidential material into a research tool that difference is the whole ballgame. Our [AI security risks](/articles/ai-security-risks/) analysis covers the broader pattern.
 

@@ -9,6 +9,7 @@ category: ai-apis
 tags: ["ai-apis", "openai", "python", "javascript", "ai-engineering", "structured-outputs"]
 type: guide
 publishDate: 2026-07-16
+updatedDate: 2026-08-02
 featured: false
 editorsPick: false
 trending: false
@@ -38,9 +39,9 @@ Examples are Python unless noted, with a JavaScript streaming example included. 
 
 ## Setup and your first request
 
-### Key handling
+### How do you store an API key safely?
 
-Install the SDK and set your key as an environment variable. The client reads `OPENAI_API_KEY` automatically.
+Keep the key in an environment variable or a secrets manager, never in source control and never in client-side code, and set an account-level spend limit as a backstop. Install the SDK and set your key as an environment variable; the client reads `OPENAI_API_KEY` automatically.
 
 ```bash
 pip install openai
@@ -149,9 +150,9 @@ for await (const event of stream) {
 
 To stream to a browser, relay the events from your backend over server-sent events. Do not proxy the raw upstream stream — you want your own error handling, your own auth check, and the ability to cut a stream off when a user disconnects, which otherwise leaves you paying for tokens nobody reads.
 
-## Structured outputs
+## How do you get guaranteed valid JSON?
 
-Asking for JSON in the prompt produces valid JSON most of the time. Structured outputs make it valid by construction, because the API constrains token selection to the schema during generation.
+Use structured outputs with an explicit schema rather than asking for JSON in the prompt text. Asking for JSON in the prompt produces valid JSON most of the time. Structured outputs make it valid by construction, because the API constrains token selection to the schema during generation, so the response parses and conforms to your field and enum definitions by definition rather than by luck.
 
 ```python
 from pydantic import BaseModel, Field
@@ -187,9 +188,9 @@ Schema design decides how well this works:
 
 Structured output guarantees the shape, not the truth. A schema-valid response can still be wrong, so validate values against business rules separately.
 
-## Tool calling
+## How does tool calling work?
 
-Tool calling lets the model request that your code run a function and hand back the result. The model never executes anything; it emits a structured request, you execute it, and you return the output.
+Tool calling lets the model request that your code run a function and hand back the result. The model never executes anything; it emits a structured request, you execute it, and you return the output. You define each tool with a name, a description and a JSON Schema for its parameters, then loop until the model stops asking.
 
 ```python
 tools = [{
@@ -273,7 +274,9 @@ Four things to get right:
 
 Where to put the vectors, and how to retrieve from them well, is covered in [vector databases explained](/articles/vector-databases-explained/).
 
-## Error handling and retries
+## What is the right retry strategy?
+
+Retry rate limit errors, timeouts, connection errors and server-side faults with exponential backoff and random jitter. Do not retry authentication failures or malformed requests, because retrying cannot fix them. The SDK handles the retryable classes automatically, so configure `max_retries` on the client rather than writing your own loop unless you need custom behavior.
 
 Four failure classes, with different correct responses.
 
@@ -311,7 +314,9 @@ Two details do most of the work. Jitter prevents synchronized clients from retry
 
 Beyond retries, put a circuit breaker in front of the provider so a sustained outage fails fast instead of queueing, and make requests idempotent where a duplicate would cause a side effect.
 
-## Token accounting and cost control
+## How do you reduce API costs?
+
+Route each task to the smallest model that passes your evaluation, keep your prompt prefix stable so caching applies, cap output length explicitly, and move anything that tolerates delay to the batch endpoint. Before any of that, log the usage object every response returns — without per-endpoint attribution you know your total bill and nothing about where it goes.
 
 Every response reports what you used. Log it.
 
@@ -332,7 +337,9 @@ log.info(
 
 Logging model, prompt version and endpoint alongside token counts is what makes cost attributable later. Without it you know your total bill and nothing about where it goes.
 
-Levers that actually reduce spend, in order of typical impact:
+### Levers that actually reduce spend
+
+In rough order of typical impact:
 
 **Route to the smallest adequate model.** Most production traffic is classification, extraction, routing and summarization, all of which small models handle well. Reserve the largest model for the requests that measurably need it. Build the routing decision on evaluation results, not intuition.
 
@@ -348,9 +355,9 @@ Levers that actually reduce spend, in order of typical impact:
 
 Counting tokens locally with a tokenizer library is useful for enforcing limits and chunking documents before you call. For billing accuracy, trust the usage object.
 
-## Working with other providers
+## Can you use the same code with other providers?
 
-Many providers and local servers implement an OpenAI-compatible endpoint, so switching frequently means changing two values:
+Often, yes. Many providers and local servers implement an OpenAI-compatible endpoint, so switching frequently means changing two values: the base URL and the model name. The same client library, request shapes and response handling carry over, which is what makes a local model a drop-in substitute for a hosted one during development.
 
 ```python
 local = OpenAI(base_url="http://localhost:11434/v1", api_key="ollama")

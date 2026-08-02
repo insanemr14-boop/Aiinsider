@@ -9,7 +9,7 @@ category: ai-agents
 tags: ["ai-agents", "agentic-ai", "mcp", "automation", "llms", "developer-tools"]
 type: review
 publishDate: 2026-07-09
-updatedDate: 2026-07-30
+updatedDate: 2026-08-02
 featured: false
 editorsPick: false
 trending: true
@@ -35,13 +35,13 @@ An AI agent is a language model in a loop: it takes an action, observes the resu
 
 This review covers four categories — coding agents, browser and computer-use agents, research agents, and the frameworks underneath them — and is deliberately explicit about how each one fails. The categories where agents work well are the ones where something other than the model can tell it whether it succeeded.
 
-## Why verification determines reliability
+## Why does verification determine agent reliability?
+
+Because an agent can only correct itself when something other than the model can tell it that it was wrong. That explains the reliability ranking across the whole field better than any model capability argument: coding agents lead because compilers and tests are oracles, research agents are middling because citations can be checked but relevance cannot, and computer-use agents trail because the environment gives them almost nothing verifiable.
 
 A coding agent runs a test suite. The tests pass or they do not. The agent gets a ground-truth signal on every iteration and can correct itself.
 
 A browser agent clicking through a checkout flow has no such signal. It sees a rendered page and infers whether it succeeded. When the inference is wrong, the error compounds silently into the next step.
-
-This explains the reliability ranking across the whole field better than any model capability argument. Coding agents lead because compilers and tests are oracles. Research agents are middling because citations can be checked but relevance cannot. Computer-use agents trail because the environment gives them almost nothing verifiable.
 
 Compounding matters too. An agent with 95 percent per-step reliability succeeds on a 20-step task about 36 percent of the time. This is why short task horizons with checkpoints beat long autonomous runs, regardless of model quality.
 
@@ -57,7 +57,7 @@ The most mature category by a wide margin.
 
 **Devin** and similar fully autonomous engineering agents remain more impressive in demonstrations than in daily use. They do real work on well-scoped tasks and struggle badly with ambiguity or unfamiliar architecture.
 
-### How coding agents fail
+### How do coding agents fail?
 
 They delete code they did not understand rather than integrating with it. They change tests to match broken behavior instead of fixing the behavior. They add dependencies to avoid solving a problem. They lose the thread on long sessions and start reverting their own earlier work. And they claim completion confidently when the build is broken.
 
@@ -71,7 +71,7 @@ Agents that operate a browser or a full desktop by looking at pixels and issuing
 
 **Open-source browser automation agents** built on Playwright and similar drivers are often more practical for repeatable workflows, because you can constrain them to specific sites and selectors and fall back to deterministic scripts when the model is unnecessary.
 
-### How computer-use agents fail
+### How do computer-use agents fail?
 
 Visual grounding errors — clicking near the right element rather than on it. Silent state divergence, where the agent believes it is on one page and is on another. No transactional safety, so a failure halfway through a multi-step form leaves an inconsistent state. Authentication walls and CAPTCHAs. And latency measured in seconds per action, which makes any long workflow slow enough that a script would have been better.
 
@@ -85,7 +85,7 @@ Agents that decompose a question, search, read, and synthesize a report with cit
 
 **Perplexity** occupies the lighter end — faster, more conversational, with citations attached inline. Better for questions than for reports.
 
-### How research agents fail
+### How do research agents fail?
 
 They over-weight what is easy to find. Sources behind paywalls, in PDFs, or in non-English languages get systematically underrepresented, so the report reflects the searchable web rather than the state of knowledge.
 
@@ -95,9 +95,9 @@ They present contested claims as settled, and they rarely tell you what they cou
 
 Treat the output as a well-organized starting bibliography, not a finished answer. Open the citations.
 
-## Agent frameworks
+## Which agent framework should you use?
 
-The infrastructure layer for building your own agents.
+LangGraph for explicit control over state and branching, the OpenAI or Claude Agent SDKs for fast development inside one vendor's ecosystem, and CrewAI or AutoGen only when you have evidence a single agent is the bottleneck. For many teams a plain loop calling a model API with tool definitions is enough. What follows is the infrastructure layer for building your own agents.
 
 **LangGraph** models agents as explicit state graphs with nodes, edges, and persisted state. It is the most capable option for complex branching workflows, human-in-the-loop checkpoints, and resumable long-running processes. It is also the steepest learning curve.
 
@@ -120,9 +120,9 @@ Whatever you build on, connect tools through [MCP](/articles/how-mcp-works/) whe
 | Research agents | Deep research tools, Perplexity | Moderate | Citations (checkable) | Autonomous, output verified |
 | Agent frameworks | LangGraph, vendor SDKs, CrewAI | N/A (infrastructure) | Whatever you build | Depends on tools granted |
 
-## How to evaluate an agent before trusting it
+## How do you evaluate an agent before trusting it?
 
-Vendor demos are chosen to succeed. Evaluate on your own tasks with a fixed harness.
+Evaluate on your own tasks with a fixed harness, because vendor demos are chosen to succeed. Build twenty to fifty representative tasks with known correct outcomes, run each one multiple times, record the specific failure mode rather than just the failure, measure cost and latency per task, and test what happens on the adversarial cases.
 
 **Build a task set.** Twenty to fifty representative tasks with known correct outcomes, drawn from work you actually do. Include the hard ones and the ambiguous ones, not just the clean cases.
 
@@ -133,6 +133,8 @@ Vendor demos are chosen to succeed. Evaluate on your own tasks with a fixed harn
 **Measure cost and latency per task.** An agent with an 80 percent success rate at ten cents may beat one with 90 percent at four dollars, depending on the cost of a failure.
 
 **Test the adversarial cases.** What happens when a tool returns an error? When a page is missing? When the instruction is ambiguous? A good agent asks or stops. A bad one improvises.
+
+### A minimal evaluation harness
 
 A minimal harness is not complicated:
 

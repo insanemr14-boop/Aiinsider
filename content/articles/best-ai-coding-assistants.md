@@ -9,7 +9,7 @@ category: ai-coding
 tags: ["ai-coding", "cursor", "github-copilot", "claude-code", "windsurf", "developer-tools"]
 type: review
 publishDate: 2026-07-02
-updatedDate: 2026-07-31
+updatedDate: 2026-08-02
 featured: false
 editorsPick: true
 trending: true
@@ -35,9 +35,9 @@ The AI coding category has split into three distinct product shapes: inline comp
 
 This review covers eight tools against consistent criteria, gives pros and cons for each, and closes with recommendations by team type. Model lineups and pricing details change constantly, so the assessment focuses on the parts that persist: architecture, context handling, workflow fit, and failure behavior.
 
-## How we evaluate
+## How do we evaluate AI coding assistants?
 
-Six criteria matter more than benchmark scores.
+Against six criteria that matter more than benchmark scores: context acquisition, agent reliability over multi-step tasks, the review surface, editor and workflow fit, model flexibility, and cost predictability. A benchmark score tells you very little about whether a tool can find the right files in a real repository or produce a diff you can actually read.
 
 **Context acquisition.** Can the tool find the right files without you naming them? This is the single biggest differentiator in real repositories. Semantic indexing, symbol graphs, and agentic file search all work; guessing does not.
 
@@ -51,11 +51,11 @@ Six criteria matter more than benchmark scores.
 
 **Cost predictability.** Flat subscriptions are predictable and capped. Usage-based agent pricing is not, and heavy agentic use can produce surprising bills.
 
-## Cursor
+## What is Cursor best at?
 
-Cursor is a fork of VS Code with AI built into the editor rather than bolted on. It remains the most complete agentic editing experience.
+Autocomplete and multi-file agentic editing. Cursor is a fork of VS Code with AI built into the editor rather than bolted on, and its autocomplete is the best in the category — it predicts multi-line edits and next-cursor-position moves rather than just completing the current line, which changes how editing feels.
 
-Its autocomplete is the best in the category — it predicts multi-line edits and next-cursor-position moves rather than just completing the current line, which changes how editing feels. Its agent mode plans multi-file changes, runs terminal commands, and iterates. Codebase indexing builds embeddings over your repository so it can retrieve relevant files without being told.
+It remains the most complete agentic editing experience. Its agent mode plans multi-file changes, runs terminal commands, and iterates. Codebase indexing builds embeddings over your repository so it can retrieve relevant files without being told.
 
 Rules files let you encode project conventions that get injected into context automatically:
 
@@ -78,9 +78,9 @@ alwaysApply: false
 
 See our detailed [Cursor vs Windsurf](/articles/cursor-vs-windsurf/) comparison for the head-to-head.
 
-## GitHub Copilot
+## Is GitHub Copilot still worth it?
 
-Copilot's advantage is not the model — it offers several frontier models from different vendors — but its position inside the platform where code review already happens.
+For organizations already on GitHub, yes. Copilot's advantage is not the model — it offers several frontier models from different vendors — but its position inside the platform where code review already happens. Inline completion, chat, agent mode, and a coding agent that opens pull requests all sit where the team already works.
 
 Inline completion is fast and stays out of the way. Copilot Chat handles questions in the editor. Agent mode executes multi-file changes. The coding agent takes an issue, works asynchronously, and opens a pull request you review normally. Code review suggestions appear in the PR interface itself.
 
@@ -171,21 +171,23 @@ For teams on IntelliJ, PyCharm, GoLand, or Rider, JetBrains' native AI Assistant
 | Aider | Terminal | Incremental git-native edits | Any (BYO key) | Metered API |
 | JetBrains AI | Native IDE | JetBrains shops | Limited | Bundled / subscription |
 
-## Recommendations by team type
+## Which AI coding assistant should your team pick?
 
-### Solo developers
+It depends on where the team already works. Solo developers get the most from one agentic editor paired with one terminal agent. Startups should stay unstandardized for a quarter and cap spend on usage-based tools. Enterprises usually take the path of least procurement resistance and add a deeper agentic tool for the teams that need it.
+
+### What should solo developers use?
 
 Start with one agentic editor and one terminal agent. Cursor plus Claude Code is the strongest combination if budget allows; Cline plus Aider on your own API key is the strongest if it does not, and gives you better cost control at moderate usage.
 
 If you already pay for ChatGPT, Codex costs nothing extra and covers delegated tasks well. Do not pay for two inline completion products.
 
-### Startups
+### What should startups use?
 
-Copilot's free and low tiers plus one agentic tool for the developers who will actually use it. Resist standardizing early — let the team try things for a quarter and standardize on what people reach for unprompted.
+Copilot's free and low tiers plus one agentic tool for the developers who will actually use it. Resist standardizing early — let the team try things for a quarter and standardize on what people reach for unprompted, then set a spending cap on usage-based tools before someone leaves an agent running overnight.
 
-Set a spending cap on usage-based tools before someone leaves an agent running overnight. Write a short policy on AI-generated code review before you need one, not after.
+Write a short policy on AI-generated code review before you need one, not after.
 
-### Enterprises
+### What should enterprises use?
 
 GitHub Copilot is usually the path of least resistance: the administration, audit, policy controls, and data handling terms already satisfy procurement, and the output lands in the review workflow you have. Add Claude Code or Cursor for the engineering teams that need deeper agentic capability, under a separate agreement.
 

@@ -9,7 +9,7 @@ category: open-source-llms
 tags: ["open-source-llms", "llama", "mistral", "qwen", "deepseek", "gemma", "local-ai"]
 type: review
 publishDate: 2026-06-11
-updatedDate: 2026-07-24
+updatedDate: 2026-08-02
 featured: false
 editorsPick: true
 trending: false
@@ -35,7 +35,9 @@ faq:
 
 Open-weight language models are now a genuine deployment option rather than a research curiosity. The strongest families — Llama, Mistral, Qwen, DeepSeek, Gemma and a growing set of challengers — cover everything from 1B models that run on a phone to sparse mixture-of-experts systems that need a server rack. The hard part is no longer capability. It is choosing a license you can actually live with and sizing the hardware honestly.
 
-## Open source and open weights are not the same thing
+## What is the difference between open source and open weights?
+
+Open weights means the trained parameters are downloadable, runnable on your own hardware and fine-tunable. Open source, in the traditional sense, additionally prohibits field-of-use restrictions and expects enough information about training data and code for a competent third party to rebuild the system. Most models marketed as open source are accurately described as open weights.
 
 Almost every model in this article is distributed as **open weights**: the trained parameters are downloadable, you can run them on your own hardware, and you can fine-tune them. That is a meaningful freedom and it is what most teams actually need.
 
@@ -47,7 +49,9 @@ A small number of projects clear both bars. Allen Institute for AI's OLMo family
 
 The practical takeaway: read the license file, not the blog post. "Open" in a launch announcement is a marketing word.
 
-## The major families
+## Which open-weight families matter most?
+
+Six cover most production use: Llama for ecosystem and tooling depth, Mistral for quality per parameter, Qwen for breadth across sizes and modalities, DeepSeek for reasoning and cost efficiency at scale, Gemma for quality per gigabyte on a single GPU, and gpt-oss for reasoning under permissive licensing. Behind them sits a long tail worth knowing about.
 
 ### Llama (Meta)
 
@@ -112,9 +116,9 @@ Several Chinese labs beyond Alibaba and DeepSeek now publish large models under 
 
 Capability rankings move every few weeks, so this table deliberately avoids scores. Treat license character and size range as the durable columns.
 
-## Hardware requirements without the guesswork
+## How much VRAM do you need to run a model?
 
-The arithmetic is simple enough to do in your head. Multiply parameter count by bytes per parameter, then add roughly 20 to 30 percent for the KV cache, activations and framework overhead.
+Multiply parameter count by bytes per parameter, then add roughly 20 to 30 percent for the KV cache, activations and framework overhead. That puts a 7B model at about 14 GB in 16-bit and roughly 3.5 GB at 4-bit, and a 70B model at over 140 GB in 16-bit and roughly 40 GB at 4-bit. The arithmetic is simple enough to do in your head.
 
 - 16-bit: 2 bytes per parameter. A 7B model needs about 14 GB before overhead.
 - 8-bit: 1 byte per parameter. That same 7B model needs about 7 GB.
@@ -122,15 +126,17 @@ The arithmetic is simple enough to do in your head. Multiply parameter count by 
 
 Scaled up, a 70B model needs over 140 GB at 16-bit, around 70 GB at 8-bit, and roughly 40 GB at 4-bit. That last number is why 48 GB workstation cards and dual 24 GB consumer setups are the sweet spot for serious local inference.
 
+### What does that formula leave out?
+
 Two corrections to the naive formula matter. First, long context is not free: the KV cache grows linearly with sequence length and with batch size, and at 100k tokens it can rival the weights in size. Models using grouped-query or latent attention reduce this substantially.
 
 Second, mixture-of-experts models break the intuition that active parameters determine cost. Compute scales with active parameters, so a sparse model generates tokens quickly. Memory scales with *total* parameters, because every expert must be resident. A sparse model with a few tens of billions of active parameters can still require hundreds of gigabytes of memory.
 
 Apple silicon is a genuine third option because unified memory means the GPU can address system RAM. A machine with 64 GB or more of unified memory runs models that would need multiple discrete GPUs, at lower token throughput but with far less complexity.
 
-## Quantization in practice
+## Which quantization format should you use?
 
-Quantization reduces the numeric precision of weights, and sometimes activations, to shrink memory and increase throughput. The formats you will encounter:
+Prefer 8-bit or FP8 if you have the memory, use 4-bit K-quants or AWQ when you do not, and avoid anything below 4-bit except for experimentation. Quantization reduces the numeric precision of weights, and sometimes activations, to shrink memory and increase throughput. The formats you will encounter:
 
 - **GGUF** is the format used by llama.cpp and everything built on it. The K-quant variants — Q4_K_M is the usual default — balance size and quality well, and GGUF runs on CPU, Metal and GPU.
 - **AWQ** and **GPTQ** are GPU-oriented post-training quantization methods that use calibration data to protect the weights that matter most. Both are well supported by production serving engines.
@@ -139,7 +145,9 @@ Quantization reduces the numeric precision of weights, and sometimes activations
 
 The practical rule: prefer 8-bit or FP8 if you have the memory, use 4-bit K-quants or AWQ when you do not, and avoid anything below 4-bit except for experimentation. Always evaluate the quantized model on your own task. Quality loss from quantization shows up first in exactly the places that are hardest to spot in casual testing — long-context recall, structured output validity and non-English fluency.
 
-## Serving: choosing a runtime
+## Should you use Ollama or vLLM?
+
+Ollama for local development, single-user workloads and quick experiments; vLLM for production serving, where continuous batching and paged attention give far higher throughput per GPU. Below both sits llama.cpp for unusual hardware and CPU-only deployment, and beside them a handful of specialists — SGLang, TensorRT-LLM and MLX.
 
 **Ollama** is the fastest path from nothing to a working local model. It manages downloads, applies sensible defaults, and exposes an OpenAI-compatible HTTP endpoint, which means code written against the patterns in our [OpenAI API tutorial](/articles/openai-api-tutorial/) usually works against a local model with only a base URL change.
 
@@ -170,9 +178,9 @@ vllm serve mistralai/Mistral-Small-Instruct \
 
 For any agent or retrieval workload, the serving layer matters more than people expect, because those systems issue many short calls with heavily shared prefixes. Prefix caching alone can halve cost. Our guide to [retrieval-augmented generation](/articles/what-is-rag/) covers why that pattern dominates production traffic.
 
-## How to choose
+## Which open-weight model should you choose?
 
-Start from constraints, not leaderboards.
+Start from constraints, not leaderboards. Choose Apache 2.0 and MIT releases if you need permissive licensing with nothing to audit, Llama if you need the deepest fine-tuning and tooling ecosystem, Qwen if you need one family spanning many modalities and sizes, Gemma or Phi if you are memory-constrained on a single consumer GPU, and DeepSeek if you need step-by-step reasoning on a budget.
 
 If you need permissive licensing with no conditions to audit, restrict yourself to Apache 2.0 and MIT releases: Mistral's permissive checkpoints, recent Qwen, DeepSeek flagships, gpt-oss, Phi, Granite and OLMo. This removes most of the legal review burden.
 

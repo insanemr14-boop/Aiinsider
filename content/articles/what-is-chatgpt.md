@@ -9,7 +9,7 @@ category: chatgpt
 tags: ["chatgpt", "openai", "llms", "generative-ai", "ai-tools"]
 type: analysis
 publishDate: 2026-06-11
-updatedDate: 2026-07-29
+updatedDate: 2026-08-02
 featured: true
 editorsPick: false
 trending: true
@@ -35,9 +35,9 @@ ChatGPT is a conversational application built on top of OpenAI's GPT family of l
 
 That framing matters, because most confusion about ChatGPT comes from conflating the product with the model. They are different things, they change on different schedules, and they behave differently.
 
-## The model underneath
+## What model does ChatGPT run on?
 
-ChatGPT is powered by transformer-based language models. The architecture does one thing: given a sequence of tokens, predict a probability distribution over the next token. Repeat, sampling from that distribution, and you get text.
+ChatGPT is powered by transformer-based language models from OpenAI's GPT family. The architecture does one thing: given a sequence of tokens, predict a probability distribution over the next token. Repeat, sampling from that distribution, and you get text. Training happens in two broad phases, pretraining and post-training, and the specific model backing the product rotates as OpenAI ships new versions.
 
 Training happens in two broad phases.
 
@@ -45,21 +45,23 @@ Training happens in two broad phases.
 
 **Post-training** shapes the raw predictor into an assistant. Supervised fine-tuning on curated demonstrations teaches the model to follow instructions. Reinforcement learning from human and AI feedback pushes it toward responses people rate as helpful, honest, and harmless. Most of what you perceive as ChatGPT's "personality" is post-training, not pretraining.
 
-### Reasoning models versus general models
+### When should you use a reasoning model?
 
-The model picker in ChatGPT usually offers at least two classes of model. General-purpose models answer immediately and are tuned for speed and conversational fluency. Reasoning models spend additional compute before responding, generating intermediate reasoning that is partially or fully hidden from you, and are meaningfully better at math, multi-step logic, and hard debugging.
+Use the reasoning models when the answer has a verifiable right and wrong; use the fast models for drafting, summarizing, and brainstorming. Reasoning models are meaningfully better at math, multi-step logic, and hard debugging. The tradeoff is latency and cost — one can take tens of seconds on a problem a general model answers in two.
 
-The tradeoff is latency and cost. A reasoning model can take tens of seconds on a problem a general model answers in two. Use the reasoning models when the answer has a verifiable right and wrong; use the fast models for drafting, summarizing, and brainstorming.
+The model picker in ChatGPT usually offers at least two classes of model. General-purpose models answer immediately and are tuned for speed and conversational fluency. Reasoning models spend additional compute before responding, generating intermediate reasoning that is partially or fully hidden from you.
 
 The specific model names rotate every few months. Any article that hard-codes them goes stale fast, so treat the model picker in the app as the source of truth.
 
-## Chat interface versus the API
+## What is the difference between ChatGPT and the OpenAI API?
 
-This is the distinction that trips up most teams evaluating ChatGPT for production.
+The chat app is a product with a model inside it; the API is the model itself. Everything the app decides for you — the hidden system prompt, conversation state, when to search the web, which model version answers — is yours to supply through the API, billed per input and output token. This is the distinction that trips up most teams evaluating ChatGPT for production.
 
 The **chat app** is a full product. It injects a system prompt you never see, manages your conversation history, decides when to invoke web search or code execution, applies memory, and enforces per-tier rate limits. Its behavior can change without notice because OpenAI ships product updates continuously.
 
 The **API** is raw model access. You send messages, you get a completion, you pay per input and output token. There is no hidden system prompt, no memory, no automatic tool invocation. You supply the system prompt, you manage conversation state, you decide which tools to expose and when to call them.
+
+### App versus API at a glance
 
 | Dimension | ChatGPT app | OpenAI API |
 |---|---|---|
@@ -106,7 +108,9 @@ Being specific here is more useful than a general endorsement.
 
 **Adversarial review.** Ask it to argue against your plan, list the assumptions you have not tested, or find the weakest paragraph in your draft. Critique is a genuinely strong mode because it does not require the model to be right about facts, only to be a competent skeptic.
 
-## Where it falls down
+## What are ChatGPT's main limitations?
+
+Six recurring failure modes: hallucination, stale knowledge, arithmetic and precise counting, long-document fidelity, sycophancy, and non-determinism. Hallucination is the one to design around most carefully, because it is not a bug that will be patched away but a property of probabilistic text generation.
 
 **Hallucination.** The model produces the most plausible continuation, and plausible is not the same as true. It will invent citations, API methods, case law, and statistics with complete confidence. This is not a bug that will be patched away; it is a property of probabilistic text generation. Grounding — retrieval, tool calls, pasted source documents — reduces the rate substantially, which is why [retrieval-augmented generation](/articles/what-is-rag/) matters for any serious deployment.
 
@@ -120,9 +124,9 @@ Being specific here is more useful than a general endorsement.
 
 **Non-determinism.** The same prompt can produce different answers. For workflows that need consistency, that is a design constraint, not a quirk to ignore.
 
-## Free versus paid tiers
+## Is ChatGPT free to use?
 
-OpenAI structures access as a free tier, individual paid tiers, and business tiers. Specific names and limits change often enough that exact figures date quickly, so here is the durable shape of the ladder.
+Yes. OpenAI structures access as a free tier, individual paid tiers, and business tiers. The free tier gives you a default model with lower rate limits and limited advanced tooling, which is enough for casual and evaluation use. Specific names and limits change often enough that exact figures date quickly, so here is the durable shape of the ladder.
 
 | Tier | Who it is for | What changes |
 |---|---|---|

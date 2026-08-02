@@ -9,7 +9,7 @@ category: claude-code
 tags: ["claude-code", "ai-coding", "anthropic", "agents", "mcp", "developer-tools"]
 type: guide
 publishDate: 2026-06-18
-updatedDate: 2026-07-29
+updatedDate: 2026-08-02
 featured: false
 editorsPick: true
 trending: false
@@ -35,21 +35,21 @@ Claude Code is a terminal-based coding agent that works directly on a local repo
 
 This guide covers installation, how the agent actually navigates a codebase, the configuration surfaces that matter (CLAUDE.md, permissions, subagents, hooks, MCP, slash commands), and a realistic workflow for shipping a feature branch.
 
-## What "agentic terminal coding" actually means
+## What does agentic terminal coding actually mean?
 
 An agentic coding tool differs from a completion model in one structural way: it has a loop. It takes a goal, decides which tool to call, observes the result, and decides again. That loop is why it can do things a completion model cannot — run a failing test, read the stack trace, locate the offending function, patch it, and re-run.
 
 The tools it has are deliberately boring: read a file, write a file, search with glob and grep patterns, run a shell command, fetch a URL. Almost everything useful is a composition of those primitives. When Claude Code "understands your architecture," what actually happened is a sequence of searches and reads that it chose itself.
 
-### Why the terminal is the right surface
+### Why is the terminal the right surface?
 
 The terminal already has everything a coding agent needs: the filesystem, the test runner, the linter, the package manager, Git, and your existing tooling. Putting the agent there means it inherits your environment instead of reimplementing it. It also means the agent is editor-agnostic — the same session works whether you use Vim, VS Code or an IDE.
 
 The trade-off is that you lose the inline diff review that editor integrations give you. You compensate with Git: work on a branch, review with `git diff`, and treat the agent's output like any other contributor's patch.
 
-## Installation and your first session
+## How do you install Claude Code and start a session?
 
-Claude Code installs as a global npm package and requires a recent Node.js runtime. You authenticate once, then run it from inside a project directory.
+Claude Code installs as a global npm package and requires a recent Node.js runtime. You authenticate once, then run it from inside a project directory. Make the first session a read-only question rather than a feature request, because the answer tells you whether the agent has oriented itself in your codebase.
 
 ```bash
 # Install globally
@@ -86,7 +86,7 @@ claude --resume
 
 The one-shot mode (`-p`) is the building block for scripting. It prints to stdout, so it composes with pipes and CI steps.
 
-## How Claude Code reads and edits a codebase
+## How does Claude Code read a codebase?
 
 The agent does not ingest your repository wholesale. It behaves like an engineer on their first day: list the directory, read the README and package manifest, grep for the symbol it cares about, open the two or three files that matter.
 
@@ -111,7 +111,7 @@ npm run lint
 
 If those commands exist and are fast, tell the agent about them in CLAUDE.md and it will run them unprompted after each change.
 
-## CLAUDE.md: project instructions that persist
+## What does CLAUDE.md do?
 
 `CLAUDE.md` is a Markdown file at the root of your repository (or in a subdirectory, for scoped context) that is loaded automatically into every session. It is the highest-leverage file in the whole setup, because it converts repeated prompt corrections into permanent behavior.
 
@@ -143,9 +143,9 @@ Keep it short and specific. Vague style advice ("write clean code") consumes con
 
 You can also keep personal, uncommitted preferences in a local settings file so they do not pollute the shared repository file.
 
-## Permissions and safety
+## Is it safe to let Claude Code run shell commands?
 
-Claude Code asks before it does anything consequential. By default, reads are free; writes, shell commands and network access prompt for approval. The prompt gives you three answers: allow once, allow for the rest of the session, or reject with feedback.
+It is manageable if you configure it deliberately. Claude Code asks before it does anything consequential: by default reads are free, while writes, shell commands and network access prompt for approval. The prompt gives you three answers — allow once, allow for the rest of the session, or reject with feedback.
 
 Manage standing rules with `/permissions`, which writes to your project or user settings:
 
@@ -171,7 +171,7 @@ Manage standing rules with `/permissions`, which writes to your project or user 
 
 Allowlist the safe, repetitive commands — test, typecheck, lint, status — so you are not approving the same thing forty times. Denylist anything destructive or irreversible. Blocking `git push` in particular is a good default: it forces a human to be the one who publishes.
 
-### Plan mode
+### What is plan mode?
 
 Plan mode is a read-only state where the agent investigates and proposes an approach without editing anything. Use it whenever a task is ambiguous or touches something you care about. You review the plan, correct the misunderstanding while it is still cheap, and only then let it execute.
 
@@ -247,9 +247,9 @@ look at most carefully. Do not push.
 
 Save that as `.claude/commands/pr.md` and `/pr` runs it in any session in the repository.
 
-## MCP server integration
+## Do you need MCP servers with Claude Code?
 
-The Model Context Protocol is an open standard for exposing tools and data to an AI agent through a uniform interface. Claude Code is an MCP client, so any MCP server becomes available as tools in your session — issue trackers, databases, browser automation, documentation search.
+No, they are optional. The Model Context Protocol is an open standard for exposing tools and data to an AI agent through a uniform interface, and Claude Code is an MCP client, so any MCP server becomes available as tools in your session — issue trackers, databases, browser automation, documentation search.
 
 ```bash
 # Add a server for this project

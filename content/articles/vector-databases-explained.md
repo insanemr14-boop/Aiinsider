@@ -9,6 +9,7 @@ category: vector-databases
 tags: ["vector-databases", "embeddings", "hnsw", "pgvector", "rag", "ai-engineering"]
 type: analysis
 publishDate: 2026-07-03
+updatedDate: 2026-08-02
 featured: false
 editorsPick: false
 trending: false
@@ -36,7 +37,9 @@ A vector database stores embeddings and finds the ones closest to a query vector
 
 Understanding those three explains nearly every performance and cost difference between the options, and it explains why the choice matters less than most teams expect.
 
-## Embeddings and similarity metrics
+## Which similarity metric should you use?
+
+The operational rule is short: use the metric the embedding model was trained with, which for most modern text embedding models is cosine similarity. If you normalize vectors to unit length at ingest, cosine and inner product become interchangeable — identical rankings, different numbers. Normalizing is generally worth it because inner product is cheaper to compute.
 
 An embedding model maps text, images or audio to a fixed-length array of floats — commonly a few hundred to a few thousand dimensions. The training objective arranges the space so that semantically related inputs land near each other.
 
@@ -48,15 +51,15 @@ Three distance measures are in general use.
 
 **Euclidean distance** measures straight-line distance. Common for image embeddings and, on normalized vectors, monotonically related to cosine similarity — same ranking, different numbers.
 
-The operational rule is short: use the metric the embedding model was trained with, and if you normalize at ingest, cosine and inner product become interchangeable. Normalizing is generally worth it because inner product is cheaper to compute.
+### How much memory do the vectors need?
 
-### Dimensions and memory
-
-Dimensionality drives cost. A float32 vector consumes four bytes per dimension, so one million 1536-dimension vectors is about 6 GB of raw data before any index structure.
+Dimensionality drives cost. A float32 vector consumes four bytes per dimension, so one million 1536-dimension vectors is about 6 GB of raw data before any index structure — and a graph index adds substantial overhead on top of that. Truncating the vector is the cheapest lever available for cutting both numbers.
 
 Several current embedding models are trained with nested representations that let you truncate the vector — taking the first 512 of 1536 dimensions, for example — with graceful rather than catastrophic quality loss. This is the cheapest lever available for cutting memory and search cost, and it is underused. Test truncation against your retrieval evaluation set before assuming you need the full width.
 
-## Index types and their tradeoffs
+## Which index type should you choose?
+
+Start with HNSW: it gives the best recall-per-latency of the mainstream options and is the default in most vector databases. Below roughly 100,000 vectors, skip the index and use flat brute-force search. When memory becomes the binding constraint, move to IVF with product quantization, or add scalar or binary quantization on top of HNSW.
 
 Exact nearest neighbor search compares the query against every vector. That is O(N) and, with modern SIMD instructions, genuinely fine up to a few hundred thousand vectors. Beyond that you trade a small amount of recall for a large amount of speed.
 
@@ -86,9 +89,9 @@ HNSW gives the best recall-per-latency of the mainstream options and is the defa
 
 The costs are real. Memory overhead is significant on top of the vectors themselves, index construction is slow for large collections, and deletions are soft — nodes are marked rather than removed, so heavy churn degrades the graph until it is rebuilt.
 
-### Quantization
+### How much does quantization save?
 
-Compression applied to the vectors themselves, usually combined with an index.
+Compression applied to the vectors themselves, usually combined with an index. Scalar quantization cuts memory by four with small recall loss. Product quantization compresses by an order of magnitude or more with real recall loss. Binary quantization is thirty-two times smaller and recall drops substantially, so it is paired with oversampling and rescoring.
 
 **Scalar quantization** maps each float32 dimension to an int8, cutting memory by four with small recall loss. Close to a free win and a sensible default above a few million vectors.
 
@@ -112,7 +115,9 @@ DiskANN-style graph indexes keep the graph on SSD with a compressed representati
 | Binary + rescore | Good with oversampling | Extremely low | Reduced ~32x | Moderate | Moderate | High-dimensional, very large, latency-critical |
 | Disk-based graph | High | Moderate | Low RAM, high disk | Slow | Moderate | Billion-scale on commodity hardware |
 
-## Filtering is the hard part
+## Why does filtering break vector search?
+
+Because the ANN index is built over the whole collection, not over the filtered subset. Post-filtering retrieves the top k by similarity and then discards results failing the filter, so a selective filter can return almost nothing. Pre-filtering is correct but expensive. Integrated filtering applies the predicate during traversal and is what the better systems do.
 
 Pure similarity search is a solved problem. Similarity search constrained by metadata — this tenant, published after this date, status active, department engineering — is where systems differ most, and where naive implementations fail badly.
 
@@ -124,7 +129,7 @@ Pure similarity search is a solved problem. Similarity search constrained by met
 
 When evaluating a vector database, test filtered queries at several selectivity levels — one percent, ten percent, fifty percent — not just unfiltered ones. Unfiltered benchmarks are close to meaningless for production RAG, where nearly every query carries a permission or recency constraint.
 
-### Hybrid search
+### What is hybrid search?
 
 Dense retrieval blurs exact tokens; keyword retrieval nails them. Production retrieval runs both and fuses the results, typically with reciprocal rank fusion. Systems with native hybrid support — a single query returning fused results — save you from maintaining two stores and reconciling them. Our guide to [retrieval-augmented generation](/articles/what-is-rag/) covers why this matters more than any index-level optimization.
 
@@ -140,7 +145,7 @@ The subtlety is that ANN recall is affected by sharding: each shard returns its 
 
 Building an HNSW index over tens of millions of vectors takes hours and saturates CPU. Treat it as a pipeline stage, not an online operation. Systems that separate storage from compute let you build on ephemeral capacity and serve from cheaper nodes.
 
-### Multi-tenancy
+### How should you isolate tenants?
 
 Three approaches, with different failure modes. A metadata field per tenant is simplest and depends entirely on filtered search performing well. A separate collection or namespace per tenant gives clean isolation and stops scaling somewhere in the thousands of tenants. Partitioned indexes within one collection are the middle ground several systems now offer specifically for this.
 
@@ -150,7 +155,9 @@ Pick deliberately. Retrofitting tenant isolation onto a shared index after a com
 
 Some systems index synchronously on write; others batch. If your application writes a document and immediately queries for it — common in agent workflows — verify the visibility guarantee rather than assuming it.
 
-## The options
+## What are the main options?
+
+pgvector for teams already running Postgres, Qdrant when metadata filtering is central, Weaviate when you want the database to own the embedding step, Pinecone when you want no operational burden, Milvus at genuinely large scale, Chroma for prototypes, and LanceDB when your data lives in object storage. Each is described below.
 
 **pgvector** adds vector types and HNSW/IVFFlat indexes to Postgres. Its advantage is not raw speed but locality: vectors sit in the same transactional database as your relational data, so filters and joins are ordinary SQL and there is no second system to keep in sync. Companion extensions add DiskANN-style indexing and streaming filtered search. For most teams under ten million vectors who already run Postgres, this is the correct default.
 
@@ -166,11 +173,13 @@ Some systems index synchronously on write; others batch. If your application wri
 
 **LanceDB** is embedded and built on a columnar file format designed for object storage, giving versioning, zero-copy reads and good multimodal support. Compelling when data lives in S3 and you want to avoid running a server.
 
+### Adjacent systems worth knowing
+
 Also worth knowing: **Elasticsearch** and **OpenSearch** combine vector search with mature BM25 and are the obvious answer if you already operate them; **Vespa** offers the most sophisticated ranking and hybrid capabilities at the cost of a steep learning curve; **FAISS** is a library rather than a database and remains the reference implementation for index research; and several object-storage-native services now offer very low cost per stored vector for workloads that tolerate higher latency.
 
-## A decision framework
+## How do you choose a vector database?
 
-Answer four questions in order.
+Answer four questions in order: how many vectors you will realistically hold in eighteen months, whether you already run Postgres, how selective your filters are, and who operates the thing. Under a million vectors almost anything works, so optimize for operational simplicity. If you already run Postgres and are in the first two size bands, pgvector is usually the answer.
 
 **1. How many vectors, realistically, in eighteen months?** Under a million, almost anything works — optimize for operational simplicity. One to fifty million is the mainstream band where pgvector and the dedicated engines all compete. Above that, you are choosing between distributed systems and disk-based indexes.
 
@@ -179,6 +188,8 @@ Answer four questions in order.
 **3. How selective are your filters?** If every query carries a tenant id, permission scope or date range that eliminates most of the corpus, filtered search performance is your primary criterion. Benchmark it directly at your real selectivity.
 
 **4. Who operates it?** Without dedicated infrastructure capacity, take the managed option. The total cost of an unmanaged cluster is not the license.
+
+### What not to optimize for
 
 Two things not to optimize for. Benchmark charts published by vendors measure unfiltered queries on uniform synthetic data and will not predict your workload. And index type matters far less than retrieval design — chunking, hybrid search and reranking move quality much more than swapping HNSW parameters.
 

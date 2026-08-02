@@ -9,6 +9,7 @@ category: video-generation
 tags: ["video-generation", "sora", "runway", "veo", "text-to-video", "voice-ai"]
 type: review
 publishDate: 2026-08-01
+updatedDate: 2026-08-02
 featured: false
 editorsPick: false
 trending: true
@@ -34,9 +35,9 @@ faq:
 
 AI video generation crossed from demo to production tool over the past two years, but unevenly. Some shot types are now cheaper and faster to generate than to film. Others remain unusable at any budget. This review separates the two, and treats duration limits, consistency failures, physics errors and true cost per finished second as the central facts rather than the fine print.
 
-## The five categories
+## What counts as an AI video tool?
 
-The term "AI video tool" covers five different products that get confused with each other.
+The term "AI video tool" covers five different products that get confused with each other: text-to-video, image-to-video, editing and enhancement, avatar and talking head, and voice and audio. They differ sharply in ceiling, control and production readiness, and most finished work uses several of them at once.
 
 **Text-to-video** generates a clip from a written description. Highest ceiling, lowest control.
 
@@ -50,7 +51,7 @@ The term "AI video tool" covers five different products that get confused with e
 
 Most finished work uses three or four of these together. Treating them as competitors is the wrong frame.
 
-## Text-to-video: what the leading models deliver
+## What can text-to-video models actually deliver?
 
 The frontier hosted models — from OpenAI, Google, Runway, Kuaishou, MiniMax and Luma among others — have converged on a similar profile. Photorealistic short clips with convincing camera motion, believable lighting, and a strong sense of cinematic composition. Several now generate synchronized audio, including dialogue and ambience, rather than delivering silent picture.
 
@@ -58,7 +59,7 @@ Within that profile, differences are real but narrower than marketing suggests. 
 
 The honest summary: for atmospheric b-roll, establishing shots, abstract motion and stylized sequences, output is frequently broadcast-usable on the second or third attempt. For a specific action performed by a specific character with a specific consequence, you will burn a lot of credits and often not get it.
 
-### Open-weight video models
+### Which AI video models have open weights?
 
 A meaningful open-weight ecosystem now exists. Models from Alibaba, Tencent, Lightricks and Genmo can be downloaded and run locally, and they integrate into node-based pipelines alongside image models. Fidelity trails the best hosted systems, and generation on consumer hardware is slow, but the tradeoffs are the familiar ones from the text side — the same open weights versus open source distinction we cover in our survey of [top open source LLMs](/articles/top-open-source-llms/) applies here, including non-commercial clauses on some checkpoints.
 
@@ -86,9 +87,9 @@ The least discussed category and the most immediately useful.
 
 **Transcript-based editing**, where cutting the text cuts the video, has changed how interview and podcast content gets assembled. Combined with filler-word removal and automatic silence trimming, it removes hours of mechanical work per episode.
 
-## Avatars and talking heads
+## Are AI avatars good enough for corporate video?
 
-This category is production-ready in a way the others are not, for a structural reason: the shot is static, the framing is predictable, and there is no physics to violate. A person standing at a lectern or sitting at a desk is exactly the case generative video handles best.
+Yes. This category is production-ready in a way the others are not, for a structural reason: the shot is static, the framing is predictable, and there is no physics to violate. A person standing at a lectern or sitting at a desk is exactly the case generative video handles best.
 
 The mainstream tools generate a presenter from a script with lip sync, offer stock avatars and custom clones built from a short recording, and support dozens of languages with matched lip movement. Enterprise use is routine for compliance and product training, internal announcements, and localizing an existing video into other languages without a reshoot.
 
@@ -120,13 +121,13 @@ Model rankings within each row change every few months. The row ordering — whi
 
 ## The limits, stated plainly
 
-### Duration
+### How long can AI-generated clips be?
 
 Clips are generated in short segments, typically measured in single-digit or low double-digit seconds. Extension features chain segments together, but each extension compounds drift in color, lighting and subject appearance. Long-form output is assembled in an editor from many short generations, not produced in one pass. Any tool promising a finished multi-minute video from a prompt is stitching clips behind the scenes, and the seams show.
 
-### Consistency
+### Can AI video keep the same character across shots?
 
-The unsolved problem. The same character across shots, the same room from two angles, the same product with the same label — all of these drift. Mitigations exist: locked reference frames, character reference features, LoRA training on a specific subject, and generating all shots in a single session with a fixed seed. None of them are reliable. Budget for continuity fixes on every project.
+Not reliably. This is the unsolved problem. The same character across shots, the same room from two angles, the same product with the same label — all of these drift. Mitigations exist: locked reference frames, character reference features, LoRA training on a specific subject, and generating all shots in a single session with a fixed seed. None of them are reliable. Budget for continuity fixes on every project.
 
 ### Physics
 
@@ -138,15 +139,15 @@ Shots where physics is incidental look extraordinary. Shots where physics is the
 
 On-screen text in generated video remains unreliable, degrading further across frames as the model re-renders it each time. Logos, product labels, watch faces, license plates and instrumentation all warp. The workaround is to composite text and graphics in post rather than asking the model to render them.
 
-### Cost
+### What does AI video actually cost?
 
-Pricing is credit-based, with credits mapping to seconds of output. Higher resolution, longer duration and higher-fidelity model tiers consume credits several times faster, and most services distinguish a fast draft mode from a full-quality mode.
+More than the headline rate suggests. Pricing is credit-based, with credits mapping to seconds of output. Higher resolution, longer duration and higher-fidelity model tiers consume credits several times faster, and most services distinguish a fast draft mode from a full-quality mode.
 
 The headline rate is not the number that matters. Usable footage typically requires several attempts per shot — more if the brief is specific — so the real figure is cost per *accepted* second, commonly five to ten times the nominal rate. For a thirty-second sequence of eight shots, that arithmetic decides whether generation beats a stock library or a small live shoot. Frequently it does not.
 
-## Building a workable pipeline
+## How do you build a workable AI video pipeline?
 
-The pattern that produces consistent results:
+Script and shot-list first, lock still frames in an image model, animate them with image-to-video, assemble in a normal editor, composite text and graphics in post, score and voice separately, and upscale last. The pattern that produces consistent results, step by step:
 
 1. **Script and shot list first.** Decide every shot before generating anything. Generative tools reward specificity and punish exploration by the credit.
 2. **Lock frames in an image model.** Generate and refine a still for each shot, including characters and environments, until they match the brief and each other.

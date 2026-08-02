@@ -9,6 +9,7 @@ category: image-generation
 tags: ["image-generation", "midjourney", "stable-diffusion", "flux", "dalle", "generative-ai"]
 type: review
 publishDate: 2026-07-09
+updatedDate: 2026-08-02
 featured: false
 editorsPick: false
 trending: true
@@ -34,9 +35,9 @@ The image generation field has converged on quality. Every serious model now pro
 
 That last point is where most teams get into trouble, so this comparison treats licensing as a first-class evaluation criterion rather than a footnote.
 
-## How we evaluate image models
+## How do we evaluate AI image generators?
 
-Six criteria, in rough order of how often they decide a real project.
+On six criteria, in rough order of how often they decide a real project: prompt adherence, text rendering, style control, editing and inpainting, licensing and commercial rights, and workflow integration. Aesthetics is deliberately absent, because every serious model now produces attractive output from a casual prompt and it no longer separates them.
 
 **Prompt adherence.** Does the model render the specific things you asked for — counts, spatial relationships, negations, multiple subjects with distinct attributes — or does it produce a beautiful image that ignores half the brief? This is where the gap between models is widest and where casual testing is least informative.
 
@@ -68,9 +69,9 @@ Prompt adherence and text rendering in this category are strong, because the und
 
 Terms of use for the major assistants generally assign output ownership to the user, subject to content policies. Content policies are stricter here than anywhere else — public figures, brands and anything adjacent to a safety category are frequently refused. If your work involves realistic people or recognizable products, expect friction.
 
-### Stable Diffusion and the open ecosystem
+### Is Stable Diffusion still worth using?
 
-Stable Diffusion's importance is no longer about the base model quality. It is about the ecosystem: tens of thousands of community fine-tunes, LoRA adapters trained on specific styles or subjects, ControlNet models that condition generation on pose, depth or edges, IP-Adapter for reference-image conditioning, and ComfyUI as a node-based environment where all of it composes into a repeatable pipeline.
+Yes, when you need control. Stable Diffusion's importance is no longer about the base model quality. It is about the ecosystem: tens of thousands of community fine-tunes, LoRA adapters trained on specific styles or subjects, ControlNet models that condition generation on pose, depth or edges, IP-Adapter for reference-image conditioning, and ComfyUI as a node-based environment where all of it composes into a repeatable pipeline.
 
 Nothing else offers that degree of determinism. If you need the same character in forty panels, or generation constrained to an exact camera angle from a 3D layout, this is where that work happens.
 
@@ -86,9 +87,9 @@ The licensing structure requires attention because it differs per variant. The f
 
 If you want Flux quality in a commercial product, use the API tier or the permissively licensed variant, or negotiate a license. Do not assume that a downloadable file is a usable one.
 
-### Ideogram
+### Is Ideogram still the best for text in images?
 
-Ideogram's differentiator is typography. It was the first model to make in-image text reliable, and it remains a sensible default for posters, packaging mockups, signage and anything where a headline has to be spelled correctly. Its handling of layout — text placed sensibly within a composition rather than pasted across it — is still better than most general models.
+For long strings and multiple text elements, yes. Ideogram's differentiator is typography. It was the first model to make in-image text reliable, and it remains a sensible default for posters, packaging mockups, signage and anything where a headline has to be spelled correctly. Its handling of layout — text placed sensibly within a composition rather than pasted across it — is still better than most general models.
 
 General-purpose models have narrowed this gap significantly. Ideogram's advantage is now clearest on longer strings and multiple text elements in one image, which is precisely where competitors still degrade.
 
@@ -116,21 +117,21 @@ For a regulated industry, an agency with client indemnity obligations, or any or
 
 Model quality rankings shift every few months. License structures and workflow integration change far more slowly, which is why those columns should carry more weight in a procurement decision.
 
-## Commercial licensing pitfalls
+## What are the commercial licensing pitfalls?
 
-Five failure modes account for nearly every problem we see.
+Five failure modes account for nearly every problem we see: confusing terms-of-service ownership with copyright, downloadable weights that carry non-commercial licenses, free-tier terms that differ from paid-tier terms, revenue and headcount thresholds that gate commercial use, and downstream infringement risk that owning an output does nothing to remove.
 
-### Confusing terms-of-service ownership with copyright
+### Do you own the copyright to an AI-generated image?
 
-A service granting you "ownership" of output is a contract between you and that service. It cannot grant copyright that does not exist. The US Copyright Office position is that purely machine-generated material lacks the human authorship required for protection, with registration possible only for the human-authored contributions such as substantial selection, arrangement and modification. For a brand asset you intend to enforce against copycats, that distinction matters enormously.
+Not necessarily. A service granting you "ownership" of output is a contract between you and that service. It cannot grant copyright that does not exist. The US Copyright Office position is that purely machine-generated material lacks the human authorship required for protection, with registration possible only for the human-authored contributions such as substantial selection, arrangement and modification. For a brand asset you intend to enforce against copycats, that distinction matters enormously.
 
-### Downloadable weights under non-commercial licenses
+### Can you use downloadable weights commercially?
 
-The single most common mistake. Several of the best open image models — including the most popular Flux checkpoint and some Stable Diffusion generations — carry licenses that prohibit or restrict commercial use. Availability on a model hub is not permission.
+Not always, and assuming otherwise is the single most common mistake in this category. Several of the best open image models — including the most popular Flux checkpoint and some Stable Diffusion generations — carry licenses that prohibit or restrict commercial use. Availability on a model hub is not permission.
 
-### Free-tier terms differing from paid-tier terms
+### Do free-tier terms match paid-tier terms?
 
-Multiple services grant only non-commercial rights on free plans, make free-tier generations public by default, or reserve broader rights to your prompts and outputs. Testing on a free plan and shipping on the assumption that the terms are the same is a reliable way to create a problem.
+Frequently not. Multiple services grant only non-commercial rights on free plans, make free-tier generations public by default, or reserve broader rights to your prompts and outputs. Testing on a free plan and shipping on the assumption that the terms are the same is a reliable way to create a problem.
 
 ### Revenue and headcount thresholds
 
@@ -140,9 +141,9 @@ Both hosted services and open-weight licenses increasingly gate commercial use b
 
 Ownership of an output does not immunize you against a claim that the output infringes someone else's work. Style is generally not protectable, but a generation that reproduces a recognizable character, logo or photograph is a risk regardless of which model produced it. Indemnification, where offered, is the only real mitigation, and it usually carries conditions such as leaving safety filters enabled.
 
-## Workflow integration
+## How do image models fit into a production workflow?
 
-For one-off assets, the hosted tools win on convenience. For anything repeatable, the calculus changes.
+For one-off assets, the hosted tools win on convenience. For anything repeatable, the calculus changes: ComfyUI has become the standard environment for production image pipelines, and product teams generally end up running an API-backed generation service with a prompt template layer in front of it, treated with the same rigor as any other prompt-driven feature.
 
 ComfyUI has become the standard environment for production image pipelines: a node graph where a workflow — load reference, extract depth, apply ControlNet, generate, upscale, face-restore — is saved as a file, version-controlled and rerun deterministically with a fixed seed. It supports open models broadly and can call hosted APIs as nodes, which means you can mix a local ControlNet stage with a hosted generation stage.
 

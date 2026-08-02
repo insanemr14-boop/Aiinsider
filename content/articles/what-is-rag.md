@@ -9,7 +9,7 @@ category: rag
 tags: ["rag", "vector-databases", "embeddings", "llms", "retrieval", "ai-engineering"]
 type: analysis
 publishDate: 2026-06-25
-updatedDate: 2026-07-30
+updatedDate: 2026-08-02
 featured: false
 editorsPick: true
 trending: false
@@ -37,9 +37,11 @@ Retrieval-augmented generation is the practice of searching a corpus at query ti
 
 The concept takes a paragraph to explain and a quarter to get right. Almost all of that difficulty sits in retrieval, not generation.
 
-## Why RAG exists
+## Why does RAG exist?
 
-A language model's knowledge is frozen at its training cutoff, compressed lossily into weights, and unattributable. Those three properties cause four concrete problems.
+A language model's knowledge is frozen at its training cutoff, compressed lossily into weights, and unattributable. Those three properties cause four concrete problems — staleness, private data, attribution and access control — and RAG addresses all four by searching a corpus at query time and placing the relevant passages in the prompt.
+
+Taking those problems in turn.
 
 **Staleness.** Anything after the cutoff is unknown. Retraining to add facts is absurdly expensive and does not scale to a corpus that changes daily.
 
@@ -51,7 +53,9 @@ A language model's knowledge is frozen at its training cutoff, compressed lossil
 
 There is a fifth benefit that gets less attention: grounding reduces fabrication. A model asked to answer from supplied text, and instructed to say when the text does not contain the answer, hallucinates substantially less than one answering from memory.
 
-### The long-context objection
+### Does a large context window make RAG unnecessary?
+
+No. Long context changes the economics of RAG without removing the need for it: corpora are larger than context windows by orders of magnitude, cost and latency scale with tokens processed, and models attend less reliably to material buried in the middle of a very long prompt.
 
 Every context window expansion prompts the claim that RAG is obsolete. It is not, for three reasons.
 
@@ -59,9 +63,9 @@ Corpora are larger than context windows by orders of magnitude, and that ratio i
 
 Long context does change the design. It makes larger chunks viable, reduces the pressure to retrieve exactly the right passage, and enables approaches that put whole documents in context once a cheap filter has narrowed the candidate set. It removes the need for aggressive compression, not the need for selection.
 
-## The pipeline end to end
+## What are the stages of a RAG pipeline?
 
-Seven stages. Failures cluster in the middle.
+Seven stages: ingest and parse, chunk, embed, index, retrieve, rerank, and generate. Failures cluster in the middle, because chunking, embedding and retrieval together decide whether the passage containing the answer ever reaches the model — and nothing downstream can recover from a miss.
 
 ### 1. Ingest and parse
 
@@ -122,9 +126,9 @@ def build_prompt(question: str, passages: list[dict]) -> list[dict]:
 
 Two details in that prompt do disproportionate work: an exact refusal string, which makes "no answer found" measurable rather than a judgment call, and the instruction to quote identifiers verbatim, which prevents the model from smoothing a part number into something plausible.
 
-## Chunking strategies
+## How should you chunk documents for RAG?
 
-Chunking determines what can be retrieved at all. If the answer spans a boundary, no retrieval method will find it intact.
+Chunk on the document's own structure — headings, sections, list items, function definitions — capped at a few hundred tokens, with contextual prefixes added at ingest, small-to-big retrieval, and a hard rule that tables and code blocks are never split. Chunking determines what can be retrieved at all: if the answer spans a boundary, no retrieval method will find it intact.
 
 **Fixed-size with overlap** splits every N tokens with a small overlap. Trivial to implement, and it will cut sentences, tables and code blocks in half. Acceptable as a baseline, rarely the right final answer.
 
@@ -134,13 +138,15 @@ Chunking determines what can be retrieved at all. If the answer spans a boundary
 
 **Semantic chunking** computes embeddings for consecutive sentences and splits where similarity drops, finding topic boundaries empirically. Elegant, more expensive, and in practice often no better than good structural chunking.
 
+### Strategies that go beyond splitting
+
 **Small-to-big / parent document** indexes small precise chunks for matching but returns the larger enclosing section to the model. This decouples retrieval granularity from generation granularity and is one of the most reliable quality wins available.
 
 **Contextual chunk augmentation** prepends a short generated description of where the chunk sits in its document — the document title, the section, what the chunk is about — before embedding. It solves the pronoun problem, where a chunk saying "it increased by twelve percent" is unretrievable because nothing in it names the subject. The cost is one cheap model call per chunk at ingest time, paid once.
 
-Practical starting point: structural chunks capped at a few hundred tokens, contextual prefixes added at ingest, small-to-big retrieval, and a hard rule that tables and code blocks are never split.
+## What is hybrid search in RAG?
 
-## Hybrid search and query handling
+Hybrid search runs a keyword algorithm such as BM25 alongside dense vector similarity and merges the two result lists, usually with reciprocal rank fusion. It exists because dense embeddings capture meaning but blur exact tokens — identifiers, error codes, product names, acronyms — which is precisely where keyword search excels.
 
 Dense embeddings capture meaning and are unreliable on exact tokens. Ask for error code `E-4471` and a vector search will happily return passages about similar-looking codes, because in embedding space they are all approximately "an error code."
 
@@ -171,7 +177,9 @@ Query handling is the other half. Users write short, ambiguous, conversational q
 
 **Decomposition** splits a compound question into sub-questions retrieved independently. Necessary for anything comparative.
 
-### Reranking
+### What is a reranker and do you need one?
+
+A reranker is a cross-encoder that feeds the query and each candidate passage through a model together, producing a far more accurate relevance score than comparing precomputed vectors. Retrieve fifty to a hundred candidates cheaply, rerank, and keep the top five to ten. For most systems this is the single largest quality improvement available for the effort.
 
 Retrieval uses a bi-encoder: query and document are embedded separately, so their vectors are computed without reference to each other. That is what makes precomputation and fast search possible, and it is also why the ranking is coarse.
 
@@ -179,9 +187,9 @@ A cross-encoder reranker feeds the query and each candidate through a model toge
 
 For most systems this is the single largest quality improvement available for the effort, and it is more valuable than upgrading the generation model.
 
-## Why most RAG systems fail at retrieval
+## Why do RAG systems return wrong answers?
 
-When a RAG system gives a wrong answer, the instinct is to blame the model or rewrite the prompt. Log what was actually retrieved and the picture usually changes: the passage containing the answer was never in the context.
+The overwhelming majority of failures are retrieval failures: the passage containing the answer was never in the context. When a RAG system gives a wrong answer, the instinct is to blame the model or rewrite the prompt, but log what was actually retrieved and the picture usually changes. Chunk boundaries, vocabulary mismatch and a top-k cutoff that is too small account for most of them.
 
 The recurring causes:
 
@@ -199,11 +207,13 @@ The recurring causes:
 
 **Parsing damage.** The answer was in a table that the PDF extractor destroyed at ingest, months earlier.
 
+### How do you diagnose a retrieval failure?
+
 The diagnostic discipline is simple and rarely followed: before touching the prompt, check whether the gold passage was in the retrieved set. If it was not, the generation model is irrelevant. If it was and the answer was still wrong, then you have a generation problem — and those are comparatively easy to fix with the techniques in our [prompt engineering guide](/articles/prompt-engineering-guide/).
 
-## Evaluation methodology
+## How should you evaluate a RAG system?
 
-You cannot improve what you do not measure, and a single end-to-end quality score tells you nothing about where to work.
+Evaluate retrieval and generation separately against a labeled set of real questions. Measure recall at k, MRR and nDCG for retrieval; measure groundedness, citation accuracy, answer relevance and appropriate refusal for generation. You cannot improve what you do not measure, and a single end-to-end quality score tells you nothing about where to work.
 
 ### Build a labeled set
 
@@ -234,9 +244,9 @@ Model-as-judge scoring works acceptably for these dimensions if you calibrate it
 
 Retrieval latency, end-to-end latency, tokens per request and cost per answer belong on the same dashboard as quality. A configuration that improves accuracy slightly while tripling latency is often the wrong trade.
 
-## When to fine-tune instead
+## Should you fine-tune instead of using RAG?
 
-The distinction is durable: **fine-tuning changes behavior, retrieval changes knowledge.**
+Only for the things retrieval cannot do. Fine-tune for consistent output structure, a house tone, unusual domain syntax, classification behavior at high volume, or a small model distilled onto one narrow task. Use retrieval for facts that change, need citations, or are permission-scoped. The distinction is durable: **fine-tuning changes behavior, retrieval changes knowledge.**
 
 Fine-tune when you need consistent output structure that prompting achieves unreliably, a specific tone or house style, comprehension of unusual domain syntax such as an internal query language, classification behavior at high volume, or a small model distilled to match a large model's performance on one narrow task at much lower cost.
 
