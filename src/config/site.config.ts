@@ -183,16 +183,16 @@ export const SITE: SiteConfig = {
  * the header layout. The mobile drawer always shows every entry.
  */
 export const MAIN_NAV = [
-  { label: 'News', href: '/news' },
-  { label: 'AI Tools', href: '/tools' },
-  { label: 'AI Agents', href: '/agents' },
-  { label: 'Tutorials', href: '/tutorials' },
-  { label: 'Prompt Library', href: '/prompts' },
-  { label: 'Comparisons', href: '/comparisons' },
-  { label: 'Reviews', href: '/reviews' },
-  { label: 'Resources', href: '/resources' },
-  { label: 'About', href: '/about' },
-  { label: 'Contact', href: '/contact' },
+  { label: 'News', href: '/news/' },
+  { label: 'AI Tools', href: '/tools/' },
+  { label: 'AI Agents', href: '/agents/' },
+  { label: 'Tutorials', href: '/tutorials/' },
+  { label: 'Prompt Library', href: '/prompts/' },
+  { label: 'Comparisons', href: '/comparisons/' },
+  { label: 'Reviews', href: '/reviews/' },
+  { label: 'Resources', href: '/resources/' },
+  { label: 'About', href: '/about/' },
+  { label: 'Contact', href: '/contact/' },
 ] as const;
 
 /** How many nav entries render inline before the "More" menu takes over. */
@@ -203,30 +203,31 @@ export const FOOTER_NAV = [
   {
     heading: 'Content',
     links: [
-      { label: 'AI News', href: '/news' },
-      { label: 'Tutorials', href: '/tutorials' },
-      { label: 'Comparisons', href: '/comparisons' },
-      { label: 'Reviews', href: '/reviews' },
-      { label: 'All Articles', href: '/articles' },
-      { label: 'Categories', href: '/categories' },
+      { label: 'AI News', href: '/news/' },
+      { label: 'Tutorials', href: '/tutorials/' },
+      { label: 'Comparisons', href: '/comparisons/' },
+      { label: 'Reviews', href: '/reviews/' },
+      { label: 'All Articles', href: '/articles/' },
+      { label: 'Categories', href: '/categories/' },
     ],
   },
   {
     heading: 'Directories',
     links: [
-      { label: 'AI Tool Directory', href: '/tools' },
-      { label: 'AI Agent Directory', href: '/agents' },
-      { label: 'Prompt Library', href: '/prompts' },
-      { label: 'Resources', href: '/resources' },
-      { label: 'Trending Topics', href: '/tags' },
+      { label: 'AI Tool Directory', href: '/tools/' },
+      { label: 'AI Agent Directory', href: '/agents/' },
+      { label: 'Prompt Library', href: '/prompts/' },
+      { label: 'Resources', href: '/resources/' },
+      { label: 'Trending Topics', href: '/tags/' },
     ],
   },
   {
     heading: 'Publication',
     links: [
-      { label: 'About', href: '/about' },
-      { label: 'Editorial Policy', href: '/editorial-policy' },
-      { label: 'Contact', href: '/contact' },
+      { label: 'About', href: '/about/' },
+      { label: 'Editorial Desks', href: '/authors/' },
+      { label: 'Editorial Policy', href: '/editorial-policy/' },
+      { label: 'Contact', href: '/contact/' },
       { label: 'RSS Feed', href: '/rss.xml' },
       { label: 'Sitemap', href: '/sitemap.xml' },
     ],
@@ -234,13 +235,47 @@ export const FOOTER_NAV = [
   {
     heading: 'Legal',
     links: [
-      { label: 'Privacy Policy', href: '/privacy-policy' },
-      { label: 'Terms & Conditions', href: '/terms' },
-      { label: 'Cookie Policy', href: '/cookie-policy' },
-      { label: 'Disclaimer', href: '/disclaimer' },
+      { label: 'Privacy Policy', href: '/privacy-policy/' },
+      { label: 'Terms & Conditions', href: '/terms/' },
+      { label: 'Cookie Policy', href: '/cookie-policy/' },
+      { label: 'Disclaimer', href: '/disclaimer/' },
     ],
   },
 ] as const;
+
+/**
+ * Minimum articles an archive needs before it is worth indexing.
+ *
+ * Archives below the threshold are served `noindex, follow` and kept out of the
+ * sitemap. They stay fully browsable and still pass link equity through to the
+ * articles — they simply do not compete as landing pages while they are thin.
+ *
+ * The problem being solved: 35 category + 70 tag pages against 20 articles is a
+ * ~5.5:1 ratio of listing pages to real content, and most of those archives wrap
+ * a single post (18 categories and 47 tags hold exactly one). Indexing roughly a
+ * hundred near-empty listings alongside 20 genuine articles dilutes the site's
+ * content-to-noise ratio, which is precisely the pattern the helpful-content
+ * system penalises.
+ *
+ * Raise these as the archive grows — an archive earns indexing when it reads as
+ * a genuine topic hub rather than a wrapper around one post.
+ *
+ * Why `category: 2` and not 3: at a threshold of 3, *zero* categories qualify
+ * today (the largest holds 2 articles), which would leave the entire category
+ * tree noindexed and absent from the sitemap. A taxonomy with no indexable
+ * members is its own bad signal. Two articles is a defensible floor — it is the
+ * point where a page stops being a wrapper around one post — and categories
+ * promote themselves automatically as coverage deepens.
+ *
+ * The underlying issue is that 35 categories is a wide taxonomy for 20 articles.
+ * The durable fix is more articles per topic, not a lower threshold; revisit
+ * this once the archive passes roughly 60 articles.
+ */
+export const INDEX_THRESHOLDS = {
+  category: 2,
+  tag: 4,
+  author: 1,
+} as const;
 
 /**
  * Content types drive the /news, /tutorials, /reviews and /comparisons
@@ -250,35 +285,35 @@ export const CONTENT_TYPES = {
   news: {
     label: 'News',
     plural: 'AI News',
-    href: '/news',
+    href: '/news/',
     description:
       'Model launches, funding, research releases and policy moves — what happened in AI and why it matters.',
   },
   guide: {
     label: 'Tutorial',
     plural: 'Tutorials',
-    href: '/tutorials',
+    href: '/tutorials/',
     description:
       'Step-by-step, hands-on tutorials for building with LLMs, agents, APIs and AI coding tools.',
   },
   review: {
     label: 'Review',
     plural: 'Reviews',
-    href: '/reviews',
+    href: '/reviews/',
     description:
       'Independent, hands-on reviews of AI tools and platforms — what they are genuinely good at, and where they fall down.',
   },
   comparison: {
     label: 'Comparison',
     plural: 'Comparisons',
-    href: '/comparisons',
+    href: '/comparisons/',
     description:
       'Head-to-head comparisons of AI models, coding assistants and platforms, decided on evidence rather than marketing.',
   },
   analysis: {
     label: 'Analysis',
     plural: 'Analysis',
-    href: '/articles',
+    href: '/articles/',
     description:
       'Deep explainers and technical analysis of how AI systems actually work.',
   },

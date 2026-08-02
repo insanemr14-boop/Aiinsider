@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { SITE, CONTENT_TYPES } from '../config/site.config';
+import { SITE, CONTENT_TYPES, INDEX_THRESHOLDS } from '../config/site.config';
 import { CATEGORIES } from '../config/categories';
 import { AUTHORS } from '../config/authors';
 import { getPublishedArticles, getAllTags, slugOf, type Article } from '../lib/articles';
@@ -15,8 +15,10 @@ import { getTools, getAgents, getPrompts, slugOfItem } from '../lib/directory';
  *      build timestamp the integration stamps on every entry. A sitemap that
  *      claims every page changed at once is a sitemap crawlers learn to ignore.
  *   3. Only index-worthy URLs. Paginated archives past page 1 are `noindex`
- *      (see ArchiveLayout), and `/search` is disallowed in robots.txt —
- *      listing either would contradict a directive we set elsewhere.
+ *      (see ArchiveLayout), thin category and tag archives are `noindex` below
+ *      INDEX_THRESHOLDS, and `/search` is disallowed in robots.txt — listing any
+ *      of them would contradict a directive we set elsewhere, and a sitemap that
+ *      advertises noindexed URLs just burns crawl budget arguing with itself.
  *
  * Every URL is derived from the same collections and config the pages are built
  * from, so this cannot advertise a route that does not exist. When you add a new
@@ -64,7 +66,9 @@ export const GET: APIRoute = async () => {
   for (const type of ['news', 'guide', 'review', 'comparison'] as const) {
     const list = articles.filter((a) => a.data.type === type);
     entries.push({
-      loc: abs(`${CONTENT_TYPES[type].href}/`),
+      // `href` already carries its trailing slash — appending another would
+      // emit `/news//`, a URL that 301s and is not the canonical.
+      loc: abs(CONTENT_TYPES[type].href),
       lastmod: freshest(list),
       changefreq: 'daily',
       priority: 0.9,
@@ -78,7 +82,19 @@ export const GET: APIRoute = async () => {
   });
 
   // ---------- Directories and hubs ----------
-  for (const hub of ['/tools/', '/agents/', '/prompts/', '/resources/', '/categories/', '/tags/']) {
+  // `/authors/` belongs here rather than with the individual desk pages below:
+  // it is the page a reader or a quality rater opens to answer "who is
+  // responsible for this content", so it needs to be discoverable in its own
+  // right, not only reachable from a byline.
+  for (const hub of [
+    '/tools/',
+    '/agents/',
+    '/prompts/',
+    '/resources/',
+    '/categories/',
+    '/tags/',
+    '/authors/',
+  ]) {
     entries.push({ loc: abs(hub), lastmod: siteLastmod, changefreq: 'weekly', priority: 0.9 });
   }
 
@@ -119,11 +135,13 @@ export const GET: APIRoute = async () => {
   }
 
   // ---------- Category archives ----------
-  // Empty categories are still built (see the category route) but are not worth
-  // a crawl budget until they hold something.
+  // Thin and empty categories are still built and still linked from /categories/
+  // (see the category route) — they are simply `noindex` until they hold enough
+  // to stand as a landing page, so submitting them here would contradict the
+  // robots meta the page itself serves.
   for (const category of CATEGORIES) {
     const inCategory = articles.filter((a) => a.data.category === category.slug);
-    if (!inCategory.length) continue;
+    if (inCategory.length < INDEX_THRESHOLDS.category) continue;
     entries.push({
       loc: abs(`/category/${category.slug}/`),
       lastmod: freshest(inCategory),
@@ -133,8 +151,11 @@ export const GET: APIRoute = async () => {
   }
 
   // ---------- Tag archives ----------
+  // Same threshold rule as categories, at a higher bar: a tag matching one or
+  // two articles is a label, not a topic hub worth ranking.
   for (const { tag } of tags) {
     const tagged = articles.filter((a) => a.data.tags.includes(tag));
+    if (tagged.length < INDEX_THRESHOLDS.tag) continue;
     entries.push({
       loc: abs(`/tag/${tag}/`),
       lastmod: freshest(tagged),
@@ -144,9 +165,11 @@ export const GET: APIRoute = async () => {
   }
 
   // ---------- Author pages ----------
+  // An author page earns its place as soon as it has a byline attached — the
+  // page carries a real bio and credentials, so one article is enough.
   for (const author of AUTHORS) {
     const written = articles.filter((a) => a.data.author === author.slug);
-    if (!written.length) continue;
+    if (written.length < INDEX_THRESHOLDS.author) continue;
     entries.push({
       loc: abs(`/authors/${author.slug}/`),
       lastmod: freshest(written),

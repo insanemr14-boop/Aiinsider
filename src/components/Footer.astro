@@ -1,6 +1,7 @@
 ---
 import { SITE, FOOTER_NAV } from '../config/site.config';
 import { CATEGORIES } from '../config/categories';
+import Logo from './Logo.astro';
 import Newsletter from './Newsletter.astro';
 
 const year = new Date().getFullYear();
@@ -25,27 +26,10 @@ const footerCategories = CATEGORIES.slice(0, 10);
           href="/"
           class="inline-flex items-center gap-2 text-lg font-extrabold tracking-tight"
         >
-          <svg class="size-7" viewBox="0 0 32 32" aria-hidden="true">
-            <rect width="32" height="32" rx="8" fill="var(--color-primary)" />
-            <path
-              d="M16 7l7 3v6c0 4.2-2.9 7.6-7 8.4-4.1-.8-7-4.2-7-8.4v-6l7-3Z"
-              fill="none"
-              stroke="#fff"
-              stroke-width="2"
-              stroke-linejoin="round"
-            />
-            <path
-              d="m12.8 16.2 2.3 2.3 4.3-4.6"
-              fill="none"
-              stroke="#fff"
-              stroke-width="2.2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
+          <Logo class="size-7" idSuffix="footer" />
           <span>
             <span class="text-[var(--text)]">{SITE.logo.primary}</span><span
-              class="text-[var(--color-primary)]">{SITE.logo.accent}</span
+              class="text-gradient">{SITE.logo.accent}</span
             >
           </span>
         </a>
@@ -174,7 +158,7 @@ const footerCategories = CATEGORIES.slice(0, 10);
         }
         <li>
           <a
-            href="/categories"
+            href="/categories/"
             class="text-sm font-semibold text-[var(--color-primary)] transition-colors hover:underline"
           >
             All categories &rarr;
@@ -191,7 +175,7 @@ const footerCategories = CATEGORIES.slice(0, 10);
       <p>&copy; {year} {SITE.organization.legalName}. All rights reserved.</p>
       <p>
         Published for defensive and educational purposes.
-        <a href="/disclaimer" class="link-underline ml-1 text-[var(--text-muted)]">
+        <a href="/disclaimer/" class="link-underline ml-1 text-[var(--text-muted)]">
           Disclaimer
         </a>
       </p>
