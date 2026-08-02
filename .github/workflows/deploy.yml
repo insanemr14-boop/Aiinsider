@@ -28,6 +28,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Configure Pages
+        # `enablement: true` creates the Pages site on the first run, so the
+        # repo does not need Settings -> Pages touched by hand. Without it the
+        # deploy job fails instantly with "Not Found" against the Pages API.
+        #
+        # The custom domain is NOT set here — it comes from `public/CNAME`,
+        # which Astro copies into dist/ and Pages reads on publish.
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
