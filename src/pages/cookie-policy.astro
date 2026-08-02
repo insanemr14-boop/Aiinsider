@@ -3,6 +3,13 @@ import PageLayout from '../layouts/PageLayout.astro';
 import { SITE } from '../config/site.config';
 
 const { googleAnalyticsId, microsoftClarityId, cloudflareAnalyticsToken } = SITE.analytics;
+// GA4 names its session cookie after the property: G-ABC123 -> _ga_ABC123.
+// Derived rather than hardcoded so swapping the measurement ID cannot leave a
+// stale cookie name published in a legal document.
+const gaSessionCookie = googleAnalyticsId
+  ? `_ga_${googleAnalyticsId.replace(/^G-/, '')}`
+  : '_ga_*';
+
 const analyticsEnabled = Boolean(
   googleAnalyticsId || microsoftClarityId || cloudflareAnalyticsToken
 );
@@ -121,11 +128,15 @@ const analyticsEnabled = Boolean(
           <td class="border border-[var(--border)] p-2.5">Session / 30 minutes</td>
         </tr>
         <tr>
-          <td class="border border-[var(--border)] p-2.5"><code>_ga</code> / <code>_ga_*</code></td>
+          <td class="border border-[var(--border)] p-2.5">
+            <code>_ga</code> / <code>{gaSessionCookie}</code>
+          </td>
           <td class="border border-[var(--border)] p-2.5">Cookie (Google Analytics 4)</td>
           <td class="border border-[var(--border)] p-2.5">
             Distinguishes visits for aggregate reporting. Only set if a GA4 measurement ID
             is configured — {googleAnalyticsId ? 'currently enabled.' : 'currently disabled.'}
+            IP anonymisation is on and Google Signals is not enabled, so no cross-device
+            advertising profile is built from your visit.
           </td>
           <td class="border border-[var(--border)] p-2.5">Up to 2 years</td>
         </tr>

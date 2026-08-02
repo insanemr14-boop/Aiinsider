@@ -143,7 +143,7 @@ export const SITE: SiteConfig = {
   // Populate these to activate the corresponding provider. Empty = disabled.
   // GA4 looks like 'G-XXXXXXXXXX'; Clarity is a 10-character project id.
   analytics: {
-    googleAnalyticsId: '',
+    googleAnalyticsId: 'G-ZD3JQTV84J',
     googleSearchConsoleVerification: 'REfhXaG6pnK53a3U7-XFJfPqEamF7fDx1AY0_a7zviM',
     microsoftClarityId: '',
     cloudflareAnalyticsToken: '',
