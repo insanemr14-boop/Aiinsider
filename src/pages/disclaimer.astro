@@ -1,0 +1,157 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { SITE } from '../config/site.config';
+---
+
+<PageLayout
+  title="Disclaimer"
+  description={`Editorial independence, affiliate disclosure, AI accuracy caveats and the limits of the information published by ${SITE.name}.`}
+  lede="Read this before acting on anything published here."
+  lastUpdated={new Date('2026-08-02')}
+>
+  <div class="not-prose mb-8 rounded-lg border border-[var(--color-warning)]/40 bg-[var(--color-warning)]/10 p-4 text-sm text-[var(--text-muted)]">
+    <strong class="text-[var(--text)]">Note:</strong> this disclaimer describes how
+    {' '}{SITE.name} actually operates. It is written in good faith but it is not legal
+    advice.
+  </div>
+
+  <h2>Editorial independence</h2>
+  <p>
+    {SITE.name} decides what to cover on its own. No vendor, sponsor, advertiser or
+    affiliate partner has any say over which tools we write about, what we conclude, or
+    when we publish. Nobody outside the desk sees an article before it goes live, and there
+    are no pre-agreed conclusions.
+  </p>
+  <p>
+    Vendors sometimes provide trial licenses, extended API credits or briefing access so we
+    can test a product properly. Accepting access to test something is not payment for
+    coverage, it does not oblige us to publish, and it has never changed a rating. Where it
+    happens on a specific piece, we say so in that piece.
+  </p>
+
+  <h2>No paid placement</h2>
+  <p>
+    Listings in the <a href="/tools/">AI tool directory</a>, the
+    <a href="/agents/">AI agent directory</a> and the
+    <a href="/prompts/">prompt library</a> cannot be bought.
+  </p>
+  <ul>
+    <li>We do not sell inclusion, position, category placement or a "featured" slot.</li>
+    <li>We do not sell ratings, badges or awards.</li>
+    <li>We do not accept paid guest posts, sponsored articles or link insertions.</li>
+    <li>We do not remove a listed weakness because a vendor asked.</li>
+  </ul>
+  <p>
+    How entries get in and how ratings are decided is documented in the
+    <a href="/editorial-policy/">editorial policy</a>.
+  </p>
+
+  <h2>Affiliate disclosure</h2>
+  <p>
+    Some outbound links to tools and services are affiliate links. If you sign up through
+    one, we may earn a commission at no additional cost to you. This is one of the ways the
+    site is funded, alongside advertising and reader support.
+  </p>
+  <p>
+    Our position on it is simple and it is not negotiable with partners:
+  </p>
+  <ul>
+    <li>An affiliate relationship never decides whether a tool is covered or listed.</li>
+    <li>An affiliate relationship never affects a rating, a ranking or a recommendation.</li>
+    <li>
+      Tools with no affiliate program at all — including open-source projects and
+      self-hosted options — appear and win comparisons on the same terms as everything
+      else.
+    </li>
+    <li>
+      If a tool we earn commission on is the wrong choice for a given use case, the article
+      says so.
+    </li>
+  </ul>
+  <p>
+    Where a page contains affiliate links, that is disclosed on the page.
+  </p>
+
+  <h2>AI content accuracy</h2>
+  <p>
+    This subject changes faster than almost anything else we could write about. Model
+    versions ship monthly, context windows and rate limits get revised, pricing tiers move,
+    free plans are withdrawn, and vendors change license terms and data-retention defaults
+    without much warning.
+  </p>
+  <p>
+    Assume anything version-specific, price-specific or benchmark-specific has a short shelf
+    life. We date every article and update the important ones, but the vendor's own current
+    documentation is always the authority. Verify before you commit budget or architecture
+    to a decision.
+  </p>
+  <p>
+    Benchmark results depend on the harness, the prompt, the temperature, the tooling and
+    the date. Numbers we cite are attributed to their source and are not directly comparable
+    across sources. Where we test something ourselves, we describe the setup so you can
+    judge how much weight the result deserves.
+  </p>
+
+  <h2>AI outputs are not reliable by default</h2>
+  <p>
+    Large language models fabricate confidently, reproduce bias in their training data, and
+    behave differently after a silent vendor-side update. Code, prompts, agent
+    configurations and automation workflows published here are starting points, not
+    finished products.
+  </p>
+  <p>
+    Test everything in an environment where failure is cheap. Review generated code before
+    it runs. Do not put an autonomous agent in front of production systems, customer data,
+    payments or anything irreversible without human review and hard limits on what it can
+    do. You remain responsible for what your systems do.
+  </p>
+
+  <h2>Not professional advice</h2>
+  <p>
+    Nothing here is professional, legal, financial, tax, medical, employment or security
+    advice. Coverage of AI companies, funding rounds and market moves is journalism, not
+    investment advice, and should not be treated as a recommendation to buy or sell
+    anything. Decisions about compliance, data protection, model licensing and regulatory
+    exposure depend on your specific circumstances — engage a qualified practitioner who can
+    look at your actual situation.
+  </p>
+
+  <h2>No warranty</h2>
+  <p>
+    Content is provided "as is" without warranty of any kind. An article that was accurate
+    on its publication date may not be accurate today. We make no guarantee that a tool will
+    perform for you the way it performed for us, or that it will still exist, still be free,
+    or still have the same license next quarter.
+  </p>
+
+  <h2>Limitation of liability</h2>
+  <p>
+    To the maximum extent permitted by law, {SITE.organization.legalName} accepts no
+    liability for any loss or damage — including data loss, service disruption, wasted spend,
+    financial loss or security incidents — arising from use of, or reliance on, anything
+    published here, or from your dealings with any third-party tool or vendor we mention.
+    See the <a href="/terms/">terms and conditions</a> for the full position.
+  </p>
+
+  <h2>Third-party products and trademarks</h2>
+  <p>
+    Mentions of vendors, models, products and open-source projects are for identification
+    and analysis. They do not constitute endorsement, and no affiliation is implied.
+    Trademarks and product names belong to their respective owners.
+  </p>
+
+  <h2>External links</h2>
+  <p>
+    We link out to documentation, papers, repositories and vendor sites because they are
+    useful. We do not control them and are not responsible for their content, accuracy,
+    availability, pricing, privacy practices or security. A link is not an endorsement of
+    the destination or of the company behind it.
+  </p>
+
+  <h2>Contact</h2>
+  <p>
+    Questions, corrections or concerns:
+    <a href={`mailto:${SITE.organization.email}`}>{SITE.organization.email}</a>, or use the
+    <a href="/contact/">contact page</a>.
+  </p>
+</PageLayout>

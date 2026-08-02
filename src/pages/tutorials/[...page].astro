@@ -1,0 +1,33 @@
+---
+import type { GetStaticPaths, Page } from 'astro';
+import ArchiveLayout from '../../layouts/ArchiveLayout.astro';
+import { getArticlesByType, type Article } from '../../lib/articles';
+import { SITE, CONTENT_TYPES } from '../../config/site.config';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const articles = await getArticlesByType('guide');
+  return paginate(articles, { pageSize: SITE.pagination.articlesPerPage });
+}) satisfies GetStaticPaths;
+
+interface Props {
+  page: Page<Article>;
+}
+
+const { page } = Astro.props;
+---
+
+<ArchiveLayout
+  title={CONTENT_TYPES.guide.plural}
+  eyebrow="Tutorials"
+  description={CONTENT_TYPES.guide.description}
+  lede="Hands-on walkthroughs for building with LLMs, agents, APIs and AI coding tools — written to be followed, not skimmed."
+  articles={page.data}
+  currentPage={page.currentPage}
+  lastPage={page.lastPage}
+  paginationBase="/tutorials"
+  emptyMessage="No tutorials have been published yet."
+  crumbs={[
+    { name: 'Home', href: '/' },
+    { name: 'Tutorials', href: '/tutorials/' },
+  ]}
+/>

@@ -1,0 +1,129 @@
+---
+/**
+ * AI Tool Directory index.
+ *
+ * Every entry is rendered server-side and grouped by category; the filter bar
+ * narrows what is visible client-side. That keeps the page fully indexable and
+ * usable without JavaScript while still feeling instant.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DirectoryCard from '../../components/DirectoryCard.astro';
+import DirectoryFilter from '../../components/DirectoryFilter.astro';
+import Newsletter from '../../components/Newsletter.astro';
+import {
+  getTools,
+  groupByCategory,
+  categoryFacets,
+  slugOfItem,
+} from '../../lib/directory';
+import { breadcrumbSchema, collectionPageSchema } from '../../lib/schema';
+import { SITE } from '../../config/site.config';
+
+const tools = await getTools();
+const groups = groupByCategory(tools);
+const categories = categoryFacets(tools);
+
+const pricing = [...new Set(tools.map((t) => t.data.pricing))]
+  .map((value) => ({
+    value,
+    count: tools.filter((t) => t.data.pricing === value).length,
+  }))
+  .sort((a, b) => b.count - a.count);
+
+const path = '/tools';
+const title = 'AI Tool Directory';
+const description = `A curated directory of ${tools.length} AI tools across chat, coding, search, image, video, voice and automation — with honest pros, cons and pricing shape for each.`;
+
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'AI Tools', href: '/tools/' },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  schemaNodes={[
+    collectionPageSchema({
+      path,
+      title,
+      description,
+      items: tools.map((t) => ({
+        name: t.data.name,
+        href: `/tools/${slugOfItem(t)}/`,
+      })),
+    }),
+    breadcrumbSchema(path, crumbs),
+  ]}
+>
+  <div class="aurora">
+    <div class="container-page py-10 sm:py-14">
+      <Breadcrumb items={crumbs} class="mb-6" />
+
+      <header class="max-w-3xl">
+        <p
+          class="text-xs font-bold uppercase tracking-[0.14em] text-[var(--color-primary)]"
+        >
+          Directory
+        </p>
+        <h1
+          class="mt-2 text-3xl font-extrabold leading-tight tracking-tight text-[var(--text)] sm:text-4xl"
+        >
+          AI <span class="text-gradient">Tool Directory</span>
+        </h1>
+        <p class="mt-4 text-lg leading-relaxed text-[var(--text-muted)]">
+          {tools.length} tools, assessed against the same criteria and updated as they
+          change. We take no payment for inclusion, and every entry lists what it is
+          bad at as well as what it is good at.
+        </p>
+      </header>
+    </div>
+  </div>
+
+  <div class="container-page pb-16">
+    <DirectoryFilter
+      categories={categories}
+      pricing={pricing}
+      searchLabel={`Search ${tools.length} AI tools`}
+      total={tools.length}
+    />
+
+    {
+      groups.map((group) => (
+        <section data-directory-group class="mb-12 last:mb-0">
+          <h2 class="mb-5 text-xl font-extrabold tracking-tight text-[var(--text)]">
+            <span
+              class="mr-2.5 inline-block h-5 w-1 rounded-full bg-[var(--color-primary)] align-[-2px]"
+              aria-hidden="true"
+            />
+            {group.category}
+          </h2>
+          <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {group.items.map((tool) => (
+              <DirectoryCard item={tool} base="tools" />
+            ))}
+          </div>
+        </section>
+      ))
+    }
+
+    <p
+      data-directory-empty
+      hidden
+      class="glass px-6 py-12 text-center text-sm text-[var(--text-muted)]"
+    >
+      No tools match those filters. Try clearing the search box or widening the category.
+    </p>
+
+    {
+      tools.length === 0 && (
+        <p class="glass px-6 py-12 text-center text-sm text-[var(--text-muted)]">
+          The tool directory is being populated.
+        </p>
+      )
+    }
+  </div>
+
+  {SITE.features.newsletter && <Newsletter />}
+</BaseLayout>

@@ -1,0 +1,219 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { SITE } from '../config/site.config';
+
+const { googleAnalyticsId, microsoftClarityId, cloudflareAnalyticsToken } = SITE.analytics;
+const analyticsEnabled = Boolean(
+  googleAnalyticsId || microsoftClarityId || cloudflareAnalyticsToken
+);
+---
+
+<PageLayout
+  title="Privacy Policy"
+  description={`How ${SITE.name} handles personal data — analytics, newsletter emails, cookies, retention, and your rights under GDPR and CCPA.`}
+  lede="What we collect, why, and what you can do about it."
+  lastUpdated={new Date('2026-08-02')}
+>
+  <div class="not-prose mb-8 rounded-lg border border-[var(--color-warning)]/40 bg-[var(--color-warning)]/10 p-4 text-sm text-[var(--text-muted)]">
+    <strong class="text-[var(--text)]">Note:</strong> this policy describes what this site
+    actually does. It is written in good faith but it is not legal advice. If you operate
+    this site, have it reviewed against your deployed configuration before relying on it.
+  </div>
+
+  <h2>Who we are</h2>
+  <p>
+    {SITE.organization.legalName} publishes <strong>{SITE.domain}</strong> — AI news, tools
+    coverage, tutorials and reviews. For any privacy question or data request, email
+    <a href={`mailto:${SITE.organization.email}`}>{SITE.organization.email}</a>.
+  </p>
+  <!--
+    Owner: if you are required to publish a registered address or a named data controller
+    entity, add it here: [Your registered address] / [Your registered legal entity].
+    If you appoint a Data Protection Officer or an EU/UK representative, list them too.
+  -->
+
+  <h2>How the site is hosted</h2>
+  <p>
+    {SITE.name} is a <strong>static site</strong>. Pages are pre-built and served as files
+    from a content delivery network. There is no reader account system, no login, no
+    comment database holding your identity, and no server-side profile of you. The
+    practical consequence is that there is very little for us to collect in the first
+    place.
+  </p>
+
+  <h2>What we collect</h2>
+
+  <h3>Information you give us</h3>
+  <ul>
+    <li>
+      <strong>Email address</strong> — only if you subscribe to the AIInsider Briefing. It
+      is used to send that newsletter and nothing else. We do not add subscribers to any
+      other list, and we do not share the list with tool vendors or advertisers.
+    </li>
+    <li>
+      <strong>Correspondence</strong> — if you email the desk, we keep your message and
+      address so we can reply, track a correction, or process a directory submission.
+    </li>
+    <li>
+      <strong>Directory and prompt submissions</strong> — the product details and contact
+      details you send us when proposing a listing for the
+      <a href="/tools/">tool directory</a>, the <a href="/agents/">agent directory</a> or
+      the <a href="/prompts/">prompt library</a>.
+    </li>
+  </ul>
+
+  <h3>Information collected automatically</h3>
+  <ul>
+    <li>
+      <strong>Server and CDN logs</strong> — our hosting provider records IP addresses,
+      user agents, timestamps and requested URLs to serve the page, mitigate abuse and
+      absorb denial-of-service traffic. We do not use these logs to identify individual
+      readers.
+    </li>
+    <li>
+      <strong>Theme preference</strong> — stored in your browser's local storage, never
+      transmitted to us. Details in the <a href="/cookie-policy/">cookie policy</a>.
+    </li>
+  </ul>
+
+  <h2>Analytics</h2>
+  <p>
+    This codebase supports three optional analytics providers. Each is
+    <strong>off unless an ID is configured</strong>, and when it is off, no script is
+    injected and the provider's servers are never contacted from your browser.
+  </p>
+  <ul>
+    <li>
+      <strong>Google Analytics 4</strong> — aggregate page views, referrers, approximate
+      country and device class. Optional.
+      {googleAnalyticsId ? ' Currently enabled.' : ' Currently disabled.'}
+    </li>
+    <li>
+      <strong>Microsoft Clarity</strong> — aggregate interaction and scroll data used to
+      find broken layouts and unreadable pages. Optional.
+      {microsoftClarityId ? ' Currently enabled.' : ' Currently disabled.'}
+    </li>
+    <li>
+      <strong>Cloudflare Web Analytics</strong> — privacy-preserving, cookieless page-view
+      counting. Optional.
+      {cloudflareAnalyticsToken ? ' Currently enabled.' : ' Currently disabled.'}
+    </li>
+  </ul>
+  <p>
+    {
+      analyticsEnabled
+        ? 'At least one analytics provider is currently active on this deployment. It is used solely to understand which articles are useful and which pages are broken.'
+        : 'At the time of the last update to this page, none of these were enabled, so no analytics data was being collected at all.'
+    }
+    We use analytics only to understand which articles are worth writing more of. We do not
+    sell personal data, we do not run behavioral advertising, and we do not build
+    cross-site profiles of readers.
+  </p>
+
+  <h2>Legal basis for processing (GDPR)</h2>
+  <ul>
+    <li>
+      <strong>Consent</strong> — newsletter subscription, and any non-essential analytics
+      or measurement cookies. You can withdraw consent at any time.
+    </li>
+    <li>
+      <strong>Legitimate interests</strong> — security logging, abuse and bot mitigation,
+      and aggregate measurement of site performance. We balance this against your rights
+      and keep the data minimal.
+    </li>
+    <li>
+      <strong>Contract</strong> — responding to a request you sent us, such as a directory
+      submission or a partnership enquiry.
+    </li>
+  </ul>
+
+  <h2>Third-party processors</h2>
+  <p>
+    We keep the list short deliberately. The services that may process data on our behalf
+    are:
+  </p>
+  <ul>
+    <li>
+      <strong>Cloudflare Pages</strong> — hosting and content delivery. Processes request
+      metadata including IP address.
+    </li>
+    <li>
+      <strong>Google Analytics 4 / Microsoft Clarity / Cloudflare Web Analytics</strong> —
+      only where configured, as described above.
+    </li>
+    <li>
+      <strong>Newsletter delivery provider</strong> — stores your email address and
+      delivery events if you subscribe.
+      <!-- Owner: name your email provider here once you have chosen one. -->
+    </li>
+    <li>
+      <strong>Web font delivery</strong> — font files are requested from Google Fonts,
+      which necessarily receives the request IP as part of serving the file.
+    </li>
+  </ul>
+  <p>
+    Some of these providers operate in the United States. Where personal data leaves the
+    UK or EEA, transfers rely on the provider's standard contractual clauses or an
+    equivalent adequacy mechanism.
+  </p>
+
+  <h2>Cookies</h2>
+  <p>
+    We set no advertising cookies and no cross-site tracking cookies. The only thing stored
+    by default is your light/dark theme preference, in local storage. A full breakdown,
+    including the cookies our CDN sets for bot mitigation, is in the
+    <a href="/cookie-policy/">cookie policy</a>.
+  </p>
+
+  <h2>Data retention</h2>
+  <ul>
+    <li><strong>Newsletter address</strong> — until you unsubscribe, then deleted from the active list.</li>
+    <li><strong>Correspondence</strong> — up to 24 months, then deleted.</li>
+    <li><strong>Directory submissions</strong> — kept while the listing is live, and for 12 months after it is removed.</li>
+    <li><strong>Server and CDN logs</strong> — retained per the provider's default window, typically days rather than months.</li>
+    <li><strong>Analytics</strong> — aggregate only, retained per the provider's configured retention period.</li>
+  </ul>
+
+  <h2>Your rights</h2>
+  <p>
+    Under the GDPR, UK GDPR and comparable regimes you may request access to your personal
+    data, correction of inaccurate data, deletion, restriction of processing, portability,
+    and you may object to processing based on legitimate interests. You can withdraw
+    consent for the newsletter at any time using the unsubscribe link in any issue.
+  </p>
+  <p>
+    Under the CCPA/CPRA, California residents may request disclosure of the categories of
+    personal information collected, request deletion, and opt out of the sale or sharing of
+    personal information. <strong>We do not sell or share personal information</strong> as
+    those terms are defined in the CCPA, and we do not discriminate against anyone who
+    exercises a privacy right.
+  </p>
+  <p>
+    To exercise any of these, email
+    <a href={`mailto:${SITE.organization.email}`}>{SITE.organization.email}</a> with the
+    subject line beginning <code>PRIVACY</code>, or use the
+    <a href="/contact/">contact page</a>. We respond within 30 days. You may also complain
+    to your local supervisory authority.
+  </p>
+
+  <h2>Security</h2>
+  <p>
+    The site is served over HTTPS with HSTS, a content security policy and modern security
+    headers. Because pages are static and there is no reader database, the attack surface
+    holding personal data is small. No system is perfectly secure; report a concern via the
+    <a href="/contact/">contact page</a>.
+  </p>
+
+  <h2>Children's privacy</h2>
+  <p>
+    {SITE.name} is written for developers and technical professionals and is not directed
+    at children under 16. We do not knowingly collect personal data from children. If you
+    believe a child has sent us personal data, email us and we will delete it.
+  </p>
+
+  <h2>Changes to this policy</h2>
+  <p>
+    If we change what we collect or which processors we use, we update this page and the
+    "last updated" date above. Material changes will also be flagged in the newsletter.
+  </p>
+</PageLayout>

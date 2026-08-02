@@ -1,0 +1,102 @@
+---
+/**
+ * A copyable text block, used by the Prompt Library.
+ *
+ * The prompt text is rendered server-side inside the <pre>, so it is fully
+ * indexable and readable with JavaScript disabled — the copy button is the only
+ * part that needs JS, and it is hidden until the script confirms clipboard
+ * support.
+ */
+interface Props {
+  text: string;
+  label?: string;
+  class?: string;
+}
+
+const { text, label = 'Prompt', class: className = '' } = Astro.props;
+---
+
+<div class={`glass overflow-hidden ${className}`} data-copy-block>
+  <div
+    class="flex items-center justify-between gap-3 border-b border-[var(--border)]
+           bg-[var(--bg-alt)] px-4 py-2.5"
+  >
+    <span class="text-xs font-semibold uppercase tracking-wide text-[var(--text-subtle)]">
+      {label}
+    </span>
+
+    <button
+      type="button"
+      data-copy-button
+      hidden
+      class="inline-flex items-center gap-1.5 rounded-md border border-[var(--border)]
+             bg-[var(--bg)] px-2.5 py-1 text-xs font-semibold text-[var(--text-muted)]
+             transition hover:border-[var(--border-strong)] hover:text-[var(--text)]
+             focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
+             focus-visible:outline-[var(--ring)]"
+    >
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+      >
+        <rect x="9" y="9" width="12" height="12" rx="2"></rect>
+        <path d="M5 15V5a2 2 0 0 1 2-2h10"></path>
+      </svg>
+      <span data-copy-label>Copy</span>
+    </button>
+  </div>
+
+  <pre
+    data-copy-source
+    class="max-h-[32rem] overflow-auto whitespace-pre-wrap break-words px-4 py-4
+           font-mono text-[13px] leading-relaxed text-[var(--text)]">{text}</pre>
+</div>
+
+<script>
+  /**
+   * Copy-to-clipboard for prompt blocks.
+   *
+   * The button starts hidden and is only revealed when `navigator.clipboard`
+   * exists, so a browser without it never shows a control that does nothing.
+   */
+  function initCopyBlocks() {
+    if (!navigator.clipboard) return;
+
+    for (const block of document.querySelectorAll<HTMLElement>('[data-copy-block]')) {
+      const button = block.querySelector<HTMLButtonElement>('[data-copy-button]');
+      const source = block.querySelector<HTMLElement>('[data-copy-source]');
+      const label = block.querySelector<HTMLElement>('[data-copy-label]');
+      if (!button || !source || !label) continue;
+      if (button.dataset.bound === 'true') continue;
+
+      button.hidden = false;
+      button.dataset.bound = 'true';
+
+      let resetTimer: number | undefined;
+
+      button.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(source.textContent ?? '');
+          label.textContent = 'Copied';
+        } catch {
+          // Clipboard access can be denied by permissions policy or a
+          // non-secure context. Tell the user rather than failing silently.
+          label.textContent = 'Press Ctrl+C';
+        }
+
+        window.clearTimeout(resetTimer);
+        resetTimer = window.setTimeout(() => {
+          label.textContent = 'Copy';
+        }, 2000);
+      });
+    }
+  }
+
+  initCopyBlocks();
+  document.addEventListener('astro:page-load', initCopyBlocks);
+</script>

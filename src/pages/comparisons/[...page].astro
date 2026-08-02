@@ -1,0 +1,33 @@
+---
+import type { GetStaticPaths, Page } from 'astro';
+import ArchiveLayout from '../../layouts/ArchiveLayout.astro';
+import { getArticlesByType, type Article } from '../../lib/articles';
+import { SITE, CONTENT_TYPES } from '../../config/site.config';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const articles = await getArticlesByType('comparison');
+  return paginate(articles, { pageSize: SITE.pagination.articlesPerPage });
+}) satisfies GetStaticPaths;
+
+interface Props {
+  page: Page<Article>;
+}
+
+const { page } = Astro.props;
+---
+
+<ArchiveLayout
+  title={CONTENT_TYPES.comparison.plural}
+  eyebrow="Comparisons"
+  description={CONTENT_TYPES.comparison.description}
+  lede="Head-to-head on the decisions that actually cost you time: which model, which coding assistant, which platform — and why."
+  articles={page.data}
+  currentPage={page.currentPage}
+  lastPage={page.lastPage}
+  paginationBase="/comparisons"
+  emptyMessage="No comparisons have been published yet."
+  crumbs={[
+    { name: 'Home', href: '/' },
+    { name: 'Comparisons', href: '/comparisons/' },
+  ]}
+/>

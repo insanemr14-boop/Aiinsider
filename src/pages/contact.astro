@@ -1,0 +1,103 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { SITE } from '../config/site.config';
+
+const email = SITE.organization.email;
+---
+
+<PageLayout
+  title="Contact"
+  description={`Get in touch with the ${SITE.name} desk — story tips, corrections, AI tool submissions for the directory, and partnership or press enquiries.`}
+  lede="Tips, corrections, tool submissions and press — here is how to reach the right desk."
+>
+  <p>
+    Everything reaches one address:
+    <a href={`mailto:${email}`}>{email}</a>. Use the subject-line prefixes below and your
+    message gets routed to the right desk faster.
+  </p>
+
+  <!-- Owner: if you add a postal address later, put it here. [Your registered address] -->
+
+  <h2>Story tips and pitches</h2>
+  <p>
+    Subject line <code>TIP</code>. Model releases, research you think is being under-covered,
+    a lab or product story with something behind it, or a build you have shipped that would
+    make a good tutorial. Include links to primary sources — a paper, a repo, a changelog, a
+    model card. Tips backed by documents get read first.
+  </p>
+  <p>
+    We do not pay for tips, and we will not name you unless you ask to be named.
+  </p>
+
+  <h2>Corrections</h2>
+  <p>
+    Subject line <code>CORRECTION</code>. Include the article URL and the exact claim you
+    are disputing, plus a source we can check. Benchmark numbers, pricing tiers and context
+    limits move quickly, so we would rather hear about a stale figure than leave it up.
+  </p>
+  <p>
+    Corrections that change a conclusion or a recommendation are noted on the article with
+    the date of the change. See the <a href="/editorial-policy/">editorial policy</a> for
+    how we handle them.
+  </p>
+
+  <h2>Tool and agent submissions</h2>
+  <p>
+    Subject line <code>DIRECTORY</code>. To be considered for the
+    <a href="/tools/">AI tool directory</a> or the
+    <a href="/agents/">AI agent directory</a>, send:
+  </p>
+  <ul>
+    <li>Product name, homepage URL and a one-sentence description of what it does.</li>
+    <li>The category it belongs in and what it competes with.</li>
+    <li>Pricing structure — free tier, individual plan, team, enterprise.</li>
+    <li>Docs or API reference, and a way for us to try it without a sales call.</li>
+  </ul>
+  <p>
+    Listings are free and cannot be bought. We do not accept payment for inclusion,
+    position or rating, and a submission is not a guarantee of a listing. Prompt
+    contributions for the <a href="/prompts/">prompt library</a> use the same address.
+  </p>
+
+  <h2>Partnerships and press</h2>
+  <p>
+    Subject line <code>PARTNER</code> for sponsorship, syndication, licensing or content
+    partnerships, and <code>PRESS</code> for interview requests, commentary or analyst
+    briefings. Include your deadline. Sponsorship never buys editorial coverage or a
+    directory position — the two are handled separately and disclosed where relevant.
+  </p>
+
+  <h2>Website and security issues</h2>
+  <p>
+    Subject line <code>SECURITY</code> for a vulnerability in this site, or
+    <code>BUG</code> for anything broken — a dead link, a rendering problem, a bad search
+    result. Include the URL and your browser. We do not run a paid bounty, and we will
+    credit reporters who want credit.
+  </p>
+
+  <h2>What we do not accept</h2>
+  <ul>
+    <li>Paid guest posts, sponsored articles or link insertions.</li>
+    <li>Requests to remove or soften accurate published reporting.</li>
+    <li>Unsolicited fully AI-generated article submissions.</li>
+    <li>Payment in exchange for a directory listing, a rating or a review outcome.</li>
+  </ul>
+  <p>
+    The reasoning is in the <a href="/editorial-policy/">editorial policy</a> and the
+    <a href="/disclaimer/">disclaimer</a>.
+  </p>
+
+  <h2>Data and privacy requests</h2>
+  <p>
+    Subject line <code>PRIVACY</code> for access, correction or deletion requests. What we
+    hold and how long we hold it is described in the
+    <a href="/privacy-policy/">privacy policy</a>.
+  </p>
+
+  <h2>Response times</h2>
+  <p>
+    This is a small desk. Security reports and corrections are triaged within two business
+    days; everything else may take longer. We read everything and reply to anything that
+    needs a reply.
+  </p>
+</PageLayout>

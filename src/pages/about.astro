@@ -1,0 +1,140 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { AUTHORS } from '../config/authors';
+import { CATEGORIES } from '../config/categories';
+import { SITE } from '../config/site.config';
+import { getPublishedArticles } from '../lib/articles';
+
+const articles = await getPublishedArticles();
+---
+
+<PageLayout
+  title={`About ${SITE.name}`}
+  description={`${SITE.name} publishes independent AI news, hands-on tutorials, tool reviews and model comparisons for people who actually build with AI.`}
+  lede="Independent AI coverage for people who build with the tools, not just read about them."
+>
+  <p>
+    Most AI coverage splits into two piles: launch posts rewritten from a press release, and
+    threads promising that everything changed this week. {SITE.name} is written for the
+    people in between — engineers, technical founders and operators who have to decide which
+    model to call, which agent framework to commit to, and whether a tool is worth the
+    migration cost.
+  </p>
+
+  <p>
+    We publish across {CATEGORIES.length} topic areas, with {articles.length}
+    {articles.length === 1 ? 'article' : 'articles'} in the archive. The remit is AI news,
+    AI tools, AI agents, LLMs, automation, AI coding, prompt engineering and the tutorials
+    that tie them together.
+  </p>
+
+  <h2>What we publish</h2>
+  <ul>
+    <li>
+      <strong><a href="/news/">News</a></strong> — model launches, lab research, funding and
+      policy, written with enough technical detail to tell a capability shift from a
+      marketing cycle.
+    </li>
+    <li>
+      <strong><a href="/tutorials/">Tutorials</a></strong> — step-by-step builds with LLM
+      APIs, agents, RAG pipelines, MCP servers and AI coding assistants. Working code, run
+      before it is published.
+    </li>
+    <li>
+      <strong><a href="/reviews/">Reviews</a></strong> — hands-on evaluations of AI tools
+      and platforms, including the parts that do not work.
+    </li>
+    <li>
+      <strong><a href="/comparisons/">Comparisons</a></strong> — head-to-head assessments of
+      models, assistants and platforms, decided on evidence and on what each one is actually
+      for.
+    </li>
+    <li>
+      <strong><a href="/articles/">Analysis</a></strong> — longer explainers on how these
+      systems work underneath, which is the half of the subject that stays true longer than
+      a version number.
+    </li>
+  </ul>
+
+  <p>
+    Alongside the writing we maintain three reference surfaces: the
+    <a href="/tools/">AI tool directory</a>, the <a href="/agents/">AI agent directory</a>
+    and the <a href="/prompts/">prompt library</a>. There is also a
+    <a href="/resources/">resources</a> section for the papers, docs and repos we keep
+    returning to.
+  </p>
+
+  <h2>How we approach accuracy</h2>
+  <p>
+    AI moves fast enough that confident invention is the default failure mode of the
+    category. We do not publish benchmark scores, pricing figures or context-window numbers
+    we cannot verify against a primary source. Where a claim is genuinely uncertain or
+    likely to change within a month, we say so in the text rather than rounding it into a
+    fact. The full standard is set out in the
+    <a href="/editorial-policy/">editorial policy</a>.
+  </p>
+
+  <h2>Editorial independence</h2>
+  <p>
+    We do not sell coverage. No vendor pays to appear in the tool or agent directory, no
+    vendor pays for a higher rating, and no vendor sees an article before it publishes.
+  </p>
+  <p>
+    The site is funded by reader support, contextual advertising and affiliate links on some
+    outbound tool links. Affiliate arrangements never determine whether a tool is covered,
+    how it is rated, or what the review says about its weaknesses. Where a commercial
+    relationship is relevant to a piece, it is disclosed in that piece. Our position on all
+    of this is spelled out in the <a href="/disclaimer/">disclaimer</a>.
+  </p>
+
+  <h2>Editorial desks</h2>
+  <p>
+    Articles are attributed to the desk that produced them. Each desk owns accuracy and
+    technical review inside its area.
+  </p>
+
+  <div class="not-prose my-6 grid gap-4 sm:grid-cols-2">
+    {
+      AUTHORS.map((author) => (
+        <div class="surface p-5">
+          <div class="flex items-center gap-3">
+            <span
+              class="grid size-10 shrink-0 place-items-center rounded-full text-sm font-bold text-white"
+              style={`background:${author.accent}`}
+              aria-hidden="true"
+            >
+              {author.initials}
+            </span>
+            <div>
+              <p class="text-sm font-bold text-[var(--text)]">
+                <a href={`/authors/${author.slug}/`} class="hover:text-[var(--color-primary)]">
+                  {author.name}
+                </a>
+              </p>
+              <p class="text-xs text-[var(--text-subtle)]">{author.role}</p>
+            </div>
+          </div>
+          <p class="mt-3 text-sm leading-relaxed text-[var(--text-muted)]">{author.bio}</p>
+        </div>
+      ))
+    }
+  </div>
+
+  <h2>Corrections</h2>
+  <p>
+    If something here is wrong, tell us. Corrections are made as soon as they are confirmed
+    and, where the change is material, noted on the article with a date. Send the article
+    URL and the specific claim you are disputing to
+    <a href={`mailto:${SITE.organization.email}`}>{SITE.organization.email}</a>, or use the
+    <a href="/contact/">contact page</a>.
+  </p>
+
+  <h2>Follow along</h2>
+  <p>
+    Every new article goes to the <a href="/rss.xml">RSS feed</a> as soon as it publishes.
+    The AIInsider Briefing is a low-volume email covering new models, tools worth your time
+    and what actually shipped. You can also browse by
+    <a href="/categories/">category</a> or <a href="/tags/">topic</a>, or use
+    <a href="/search/">search</a> if you know what you are looking for.
+  </p>
+</PageLayout>

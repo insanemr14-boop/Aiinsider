@@ -1,0 +1,248 @@
+---
+/**
+ * Resources hub — the site's index of indexes.
+ *
+ * Exists for two reasons: readers who want a map of everything, and crawlers
+ * that benefit from one page linking to every major surface with descriptive
+ * anchor text.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Newsletter from '../components/Newsletter.astro';
+import { getTools, getAgents, getPrompts } from '../lib/directory';
+import { getPublishedArticles, getAllTags } from '../lib/articles';
+import { CATEGORIES, CATEGORY_GROUPS } from '../config/categories';
+import { breadcrumbSchema, webPageSchema } from '../lib/schema';
+import { SITE, CONTENT_TYPES } from '../config/site.config';
+
+const [tools, agents, prompts, articles, tags] = await Promise.all([
+  getTools(),
+  getAgents(),
+  getPrompts(),
+  getPublishedArticles(),
+  getAllTags(),
+]);
+
+const path = '/resources';
+const title = 'AI Resources';
+const description = `Every ${SITE.name} resource in one place — ${articles.length} articles, ${tools.length} AI tools, ${agents.length} AI agents, ${prompts.length} prompts and ${CATEGORIES.length} topic categories.`;
+
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Resources', href: '/resources/' },
+];
+
+/** The primary surfaces, with live counts so the page never goes stale. */
+const HUBS = [
+  {
+    label: 'AI Tool Directory',
+    href: '/tools/',
+    count: tools.length,
+    unit: 'tools',
+    body: 'Chat assistants, coding tools, image and video generators, automation platforms — assessed against consistent criteria.',
+  },
+  {
+    label: 'AI Agent Directory',
+    href: '/agents/',
+    count: agents.length,
+    unit: 'agents',
+    body: 'Coding agents, browser agents, research agents and the frameworks used to build your own, with runtime and autonomy noted.',
+  },
+  {
+    label: 'Prompt Library',
+    href: '/prompts/',
+    count: prompts.length,
+    unit: 'prompts',
+    body: 'Copy-ready prompt templates with their variables, tested models and a note on the technique behind each one.',
+  },
+  {
+    label: 'Trending Topics',
+    href: '/tags/',
+    count: tags.length,
+    unit: 'topics',
+    body: 'Every topic we cover, sized by depth of coverage. The fastest route into a specific corner of the archive.',
+  },
+];
+
+/** Content surfaces, derived from the configured content types. */
+const READING = [
+  { ...CONTENT_TYPES.news, href: '/news/' },
+  { ...CONTENT_TYPES.guide, href: '/tutorials/' },
+  { ...CONTENT_TYPES.comparison, href: '/comparisons/' },
+  { ...CONTENT_TYPES.review, href: '/reviews/' },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  schemaNodes={[
+    webPageSchema({ path, title, description, breadcrumbPath: path }),
+    breadcrumbSchema(path, crumbs),
+  ]}
+>
+  <div class="aurora">
+    <div class="container-page py-10 sm:py-14">
+      <Breadcrumb items={crumbs} class="mb-6" />
+
+      <header class="max-w-3xl">
+        <p class="text-xs font-bold uppercase tracking-[0.14em] text-[var(--color-primary)]">
+          Resources
+        </p>
+        <h1
+          class="mt-2 text-3xl font-extrabold leading-tight tracking-tight text-[var(--text)] sm:text-4xl"
+        >
+          Everything on <span class="text-gradient">{SITE.name}</span>
+        </h1>
+        <p class="mt-4 text-lg leading-relaxed text-[var(--text-muted)]">
+          A map of the whole site — directories, libraries, archives and the full topic
+          taxonomy. If you are not sure where to start, start here.
+        </p>
+      </header>
+    </div>
+  </div>
+
+  <div class="container-page space-y-14 pb-16">
+    {/* ---------------- Directories ---------------- */}
+    <section aria-labelledby="hubs">
+      <SectionHeading
+        id="hubs"
+        title="Directories and libraries"
+        description="Curated, filterable and updated as the ecosystem moves."
+      />
+      <div class="grid gap-4 sm:grid-cols-2">
+        {
+          HUBS.map((hub) => (
+            <a
+              href={hub.href}
+              class="glass group relative flex flex-col p-5 transition-all duration-200
+                     hover:-translate-y-0.5 hover:border-[var(--border-strong)]
+                     hover:shadow-lg hover:shadow-black/5"
+            >
+              <div class="flex items-baseline justify-between gap-3">
+                <h3 class="text-base font-bold tracking-tight text-[var(--text)] group-hover:text-[var(--color-primary)]">
+                  {hub.label}
+                </h3>
+                <span class="shrink-0 text-xs font-semibold tabular-nums text-[var(--text-subtle)]">
+                  {hub.count} {hub.unit}
+                </span>
+              </div>
+              <p class="mt-2 text-sm leading-relaxed text-[var(--text-muted)]">{hub.body}</p>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+    {/* ---------------- Reading ---------------- */}
+    <section aria-labelledby="reading">
+      <SectionHeading
+        id="reading"
+        title="By content type"
+        description="The same archive, sliced by what you came for."
+      />
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          READING.map((surface) => (
+            <a
+              href={surface.href}
+              class="glass group relative flex flex-col p-5 transition-all duration-200
+                     hover:-translate-y-0.5 hover:border-[var(--border-strong)]"
+            >
+              <h3 class="text-base font-bold tracking-tight text-[var(--text)] group-hover:text-[var(--color-primary)]">
+                {surface.plural}
+              </h3>
+              <p class="clamp-3 mt-2 text-sm leading-relaxed text-[var(--text-muted)]">
+                {surface.description}
+              </p>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+    {/* ---------------- Full taxonomy ---------------- */}
+    <section aria-labelledby="taxonomy">
+      <SectionHeading
+        id="taxonomy"
+        title="Full topic taxonomy"
+        description={`All ${CATEGORIES.length} categories we publish into.`}
+        href="/categories/"
+        linkLabel="Category grid"
+      />
+
+      <div class="space-y-8">
+        {
+          CATEGORY_GROUPS.map((group) => {
+            const inGroup = CATEGORIES.filter((c) => c.group === group);
+            if (inGroup.length === 0) return null;
+            return (
+              <div>
+                <h3 class="mb-3 text-xs font-bold uppercase tracking-[0.14em] text-[var(--text-subtle)]">
+                  {group}
+                </h3>
+                <ul class="flex flex-wrap gap-2">
+                  {inGroup.map((c) => (
+                    <li>
+                      <a
+                        href={`/category/${c.slug}/`}
+                        class="inline-flex items-center gap-2 rounded-full border border-[var(--border)]
+                               px-3 py-1.5 text-sm font-medium text-[var(--text-muted)] transition
+                               hover:border-[var(--border-strong)] hover:text-[var(--text)]"
+                      >
+                        <span
+                          class="h-2 w-2 shrink-0 rounded-full"
+                          style={`background-color: ${c.accent}`}
+                          aria-hidden="true"
+                        />
+                        {c.name}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })
+        }
+      </div>
+    </section>
+
+    {/* ---------------- Feeds and utilities ---------------- */}
+    <section aria-labelledby="utilities">
+      <SectionHeading
+        id="utilities"
+        title="Feeds and utilities"
+        description="For readers who prefer to pull rather than be pushed."
+      />
+      <ul class="glass divide-y divide-[var(--border)] p-2">
+        {
+          [
+            { label: 'RSS feed', href: '/rss.xml', body: 'Every article, full metadata, no tracking.' },
+            { label: 'Sitemap', href: '/sitemap-index.xml', body: 'Machine-readable index of every page.' },
+            { label: 'Search', href: '/search/', body: 'Full-text search across the entire archive.' },
+            { label: 'Editorial policy', href: '/editorial-policy/', body: 'How we research, review and correct.' },
+          ].map((u) => (
+            <li>
+              <a
+                href={u.href}
+                class="flex items-baseline justify-between gap-4 rounded-lg px-3 py-3 transition
+                       hover:bg-[var(--bg-alt)]"
+              >
+                <span>
+                  <span class="font-semibold text-[var(--text)]">{u.label}</span>
+                  <span class="ml-2 text-sm text-[var(--text-muted)]">{u.body}</span>
+                </span>
+                <span class="shrink-0 text-[var(--color-primary)]" aria-hidden="true">
+                  &rarr;
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </div>
+
+  {SITE.features.newsletter && <Newsletter />}
+</BaseLayout>

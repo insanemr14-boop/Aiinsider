@@ -1,0 +1,107 @@
+---
+/**
+ * Trending Topics — every tag in use, sized by how much has been written about
+ * it. Doubles as the site's internal-link hub for long-tail queries.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import Newsletter from '../components/Newsletter.astro';
+import { getAllTags } from '../lib/articles';
+import { breadcrumbSchema, collectionPageSchema } from '../lib/schema';
+import { SITE } from '../config/site.config';
+
+const tags = await getAllTags();
+const max = tags[0]?.count ?? 1;
+
+const path = '/tags';
+const title = 'Trending AI Topics';
+const description = `Every topic covered on ${SITE.name} — ${tags.length} tags spanning AI models, agents, coding tools, automation and research, ranked by depth of coverage.`;
+
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Trending Topics', href: '/tags/' },
+];
+
+/**
+ * Tag weight drives type size. Three steps rather than a continuous scale —
+ * a true cloud with dozens of sizes is unreadable and hurts scannability.
+ */
+function weightOf(count: number): 'lg' | 'md' | 'sm' {
+  const ratio = count / max;
+  if (ratio >= 0.66) return 'lg';
+  if (ratio >= 0.33) return 'md';
+  return 'sm';
+}
+
+const SIZE_CLASS = {
+  lg: 'text-base font-bold',
+  md: 'text-sm font-semibold',
+  sm: 'text-xs font-medium',
+} as const;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  schemaNodes={[
+    collectionPageSchema({
+      path,
+      title,
+      description,
+      items: tags.map((t) => ({ name: t.tag, href: `/tag/${t.tag}/` })),
+    }),
+    breadcrumbSchema(path, crumbs),
+  ]}
+>
+  <div class="aurora">
+    <div class="container-page py-10 sm:py-14">
+      <Breadcrumb items={crumbs} class="mb-6" />
+
+      <header class="max-w-3xl">
+        <p class="text-xs font-bold uppercase tracking-[0.14em] text-[var(--color-primary)]">
+          Topics
+        </p>
+        <h1
+          class="mt-2 text-3xl font-extrabold leading-tight tracking-tight text-[var(--text)] sm:text-4xl"
+        >
+          Trending <span class="text-gradient">AI Topics</span>
+        </h1>
+        <p class="mt-4 text-lg leading-relaxed text-[var(--text-muted)]">
+          {tags.length} topics, sized by how much we have published on each. A larger tag
+          means deeper coverage, not more hype.
+        </p>
+      </header>
+    </div>
+  </div>
+
+  <div class="container-page pb-16">
+    {
+      tags.length > 0 ? (
+        <ul class="glass flex flex-wrap gap-2 p-6">
+          {tags.map(({ tag, count }) => (
+            <li>
+              <a
+                href={`/tag/${tag}/`}
+                class:list={[
+                  'inline-flex items-baseline gap-1.5 rounded-full border border-[var(--border)]',
+                  'px-3 py-1.5 text-[var(--text-muted)] transition',
+                  'hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]',
+                  SIZE_CLASS[weightOf(count)],
+                ]}
+              >
+                #{tag}
+                <span class="text-[11px] font-normal opacity-60 tabular-nums">{count}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="glass px-6 py-12 text-center text-sm text-[var(--text-muted)]">
+          No topics yet — they appear here as articles are published.
+        </p>
+      )
+    }
+  </div>
+
+  {SITE.features.newsletter && <Newsletter />}
+</BaseLayout>

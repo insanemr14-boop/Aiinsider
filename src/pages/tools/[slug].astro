@@ -1,0 +1,31 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import DirectoryLayout from '../../layouts/DirectoryLayout.astro';
+import {
+  getTools,
+  relatedItems,
+  slugOfItem,
+  type Tool,
+} from '../../lib/directory';
+
+export const getStaticPaths = (async () => {
+  const tools = await getTools();
+  return tools.map((tool) => ({
+    params: { slug: slugOfItem(tool) },
+    props: { tool, related: relatedItems(tool, tools, 3) },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  tool: Tool;
+  related: Tool[];
+}
+
+const { tool, related } = Astro.props;
+const { Content } = await render(tool);
+---
+
+<DirectoryLayout item={tool} base="tools" baseLabel="AI Tools" related={related}>
+  <Content />
+</DirectoryLayout>

@@ -1,0 +1,230 @@
+---
+/**
+ * Client-side filter bar for the directory index pages.
+ *
+ * Design constraints this satisfies:
+ *   - Works with JavaScript disabled: every entry is rendered server-side and
+ *     visible by default. The filter is an enhancement, not a dependency.
+ *   - No layout shift: filtering toggles `hidden` on cards already in the DOM.
+ *   - No inline JS: the script below is bundled by Astro into /_astro, so the
+ *     Content-Security-Policy needs no 'unsafe-inline' for it.
+ */
+interface Props {
+  /** Category facets with counts, from `categoryFacets()`. */
+  categories: { value: string; count: number }[];
+  /** Pricing facets with counts. */
+  pricing: { value: string; count: number }[];
+  /** Label for the free-text box, e.g. "Search 24 tools". */
+  searchLabel: string;
+  total: number;
+}
+
+const { categories, pricing, searchLabel, total } = Astro.props;
+---
+
+<div class="glass mb-8 p-4 sm:p-5" data-directory-filter>
+  {/* ---------- Free-text search ---------- */}
+  <div class="relative">
+    <svg
+      class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-subtle)]"
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      aria-hidden="true"
+    >
+      <circle cx="11" cy="11" r="7"></circle>
+      <path d="m16 16 5 5"></path>
+    </svg>
+    <label class="sr-only" for="directory-search">{searchLabel}</label>
+    <input
+      id="directory-search"
+      type="search"
+      autocomplete="off"
+      placeholder={searchLabel}
+      data-filter-search
+      class="w-full rounded-lg border border-[var(--border)] bg-[var(--bg)] py-2.5 pl-10 pr-3
+             text-sm text-[var(--text)] outline-none transition
+             placeholder:text-[var(--text-subtle)]
+             focus-visible:border-[var(--ring)] focus-visible:ring-2 focus-visible:ring-[var(--ring)]/30"
+    />
+  </div>
+
+  {/* ---------- Facets ---------- */}
+  <div class="mt-4 space-y-3">
+    <fieldset>
+      <legend class="mb-2 text-xs font-semibold uppercase tracking-wide text-[var(--text-subtle)]">
+        Category
+      </legend>
+      <div class="flex flex-wrap gap-1.5">
+        <button
+          type="button"
+          data-filter-facet="category"
+          data-value="all"
+          aria-pressed="true"
+          class="filter-chip">All <span class="opacity-60">{total}</span></button
+        >
+        {
+          categories.map((c) => (
+            <button
+              type="button"
+              data-filter-facet="category"
+              data-value={c.value}
+              aria-pressed="false"
+              class="filter-chip"
+            >
+              {c.value} <span class="opacity-60">{c.count}</span>
+            </button>
+          ))
+        }
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend class="mb-2 text-xs font-semibold uppercase tracking-wide text-[var(--text-subtle)]">
+        Pricing
+      </legend>
+      <div class="flex flex-wrap gap-1.5">
+        <button
+          type="button"
+          data-filter-facet="pricing"
+          data-value="all"
+          aria-pressed="true"
+          class="filter-chip">Any</button
+        >
+        {
+          pricing.map((p) => (
+            <button
+              type="button"
+              data-filter-facet="pricing"
+              data-value={p.value}
+              aria-pressed="false"
+              class="filter-chip"
+            >
+              {p.value.replace(/-/g, ' ')} <span class="opacity-60">{p.count}</span>
+            </button>
+          ))
+        }
+      </div>
+    </fieldset>
+  </div>
+
+  {/* Announced to assistive tech when the result count changes. */}
+  <p
+    class="mt-4 text-xs text-[var(--text-subtle)]"
+    data-filter-status
+    role="status"
+    aria-live="polite"
+  >
+  </p>
+</div>
+
+<style>
+  .filter-chip {
+    border-radius: 9999px;
+    border: 1px solid var(--border);
+    padding: 0.3rem 0.7rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    background-color: transparent;
+    cursor: pointer;
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease,
+      border-color 0.15s ease;
+    text-transform: capitalize;
+  }
+  .filter-chip:hover {
+    border-color: var(--border-strong);
+    color: var(--text);
+  }
+  .filter-chip[aria-pressed='true'] {
+    background-color: var(--brand);
+    border-color: var(--brand);
+    color: var(--brand-contrast);
+  }
+  .filter-chip:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+</style>
+
+<script>
+  /**
+   * Directory filtering.
+   *
+   * Runs once per page. All state lives in the DOM (aria-pressed on the chips)
+   * so there is nothing to keep in sync and the back button behaves.
+   */
+  function initDirectoryFilter() {
+    const root = document.querySelector<HTMLElement>('[data-directory-filter]');
+    if (!root) return;
+
+    const search = root.querySelector<HTMLInputElement>('[data-filter-search]');
+    const status = root.querySelector<HTMLElement>('[data-filter-status]');
+    const chips = [...root.querySelectorAll<HTMLButtonElement>('[data-filter-facet]')];
+    const items = [...document.querySelectorAll<HTMLElement>('[data-directory-item]')];
+    // Group wrappers are hidden entirely when every child is filtered out.
+    const groups = [...document.querySelectorAll<HTMLElement>('[data-directory-group]')];
+    const empty = document.querySelector<HTMLElement>('[data-directory-empty]');
+
+    const selected = { category: 'all', pricing: 'all' };
+
+    function apply() {
+      const query = (search?.value ?? '').trim().toLowerCase();
+      let visible = 0;
+
+      for (const item of items) {
+        const matchesCategory =
+          selected.category === 'all' || item.dataset.category === selected.category;
+        const matchesPricing =
+          selected.pricing === 'all' || item.dataset.pricing === selected.pricing;
+        const matchesQuery = !query || (item.dataset.name ?? '').includes(query);
+        const show = matchesCategory && matchesPricing && matchesQuery;
+
+        item.hidden = !show;
+        if (show) visible++;
+      }
+
+      // Collapse any group heading whose entries are all hidden.
+      for (const group of groups) {
+        const anyVisible = [...group.querySelectorAll<HTMLElement>('[data-directory-item]')].some(
+          (el) => !el.hidden
+        );
+        group.hidden = !anyVisible;
+      }
+
+      if (empty) empty.hidden = visible !== 0;
+      if (status) {
+        status.textContent =
+          visible === items.length
+            ? `Showing all ${items.length} entries`
+            : `Showing ${visible} of ${items.length} entries`;
+      }
+    }
+
+    for (const chip of chips) {
+      chip.addEventListener('click', () => {
+        const facet = chip.dataset.filterFacet as 'category' | 'pricing';
+        const value = chip.dataset.value ?? 'all';
+        selected[facet] = value;
+
+        for (const other of chips) {
+          if (other.dataset.filterFacet !== facet) continue;
+          other.setAttribute('aria-pressed', String(other === chip));
+        }
+        apply();
+      });
+    }
+
+    search?.addEventListener('input', apply);
+    apply();
+  }
+
+  initDirectoryFilter();
+  // Astro's client-side router replaces the document body on navigation.
+  document.addEventListener('astro:page-load', initDirectoryFilter);
+</script>

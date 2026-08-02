@@ -1,0 +1,345 @@
+---
+/**
+ * Home page.
+ *
+ * Section order mirrors how readers actually arrive: what just happened
+ * (news), what to read to understand it (guides), what to use (tools, agents),
+ * how to use it (tutorials), and whether it is any good (reviews).
+ *
+ * Every section is conditional on having content, so the page degrades cleanly
+ * on a fresh install rather than rendering empty rails.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import CategoryCard from '../components/CategoryCard.astro';
+import DirectoryCard from '../components/DirectoryCard.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Newsletter from '../components/Newsletter.astro';
+import { SITE, CONTENT_TYPES } from '../config/site.config';
+import { CATEGORIES } from '../config/categories';
+import {
+  getPublishedArticles,
+  getFeaturedArticles,
+  getArticlesByType,
+  getTrendingArticles,
+  getEditorsPicks,
+  getCategoryCounts,
+  slugOf,
+} from '../lib/articles';
+import { getTools, getAgents, getPrompts, promptUrl } from '../lib/directory';
+import { collectionPageSchema } from '../lib/schema';
+
+const [all, featured, news, guides, reviews, trending, picks, counts, tools, agents, prompts] =
+  await Promise.all([
+    getPublishedArticles(),
+    getFeaturedArticles(4),
+    getArticlesByType('news'),
+    getArticlesByType('guide'),
+    getArticlesByType('review'),
+    getTrendingArticles(5),
+    getEditorsPicks(3),
+    getCategoryCounts(),
+    getTools(),
+    getAgents(),
+    getPrompts(),
+  ]);
+
+const latestNews = news.slice(0, 4);
+const latestTutorials = guides.slice(0, 3);
+const latestReviews = reviews.slice(0, 3);
+const topTools = tools.slice(0, 6);
+const topAgents = agents.slice(0, 6);
+const topPrompts = prompts.slice(0, 4);
+
+// Show categories that actually have content first, then fill the grid.
+const withContent = CATEGORIES.filter((c) => counts.get(c.slug));
+const featuredCategories = [
+  ...withContent,
+  ...CATEGORIES.filter((c) => !counts.get(c.slug)),
+].slice(0, 8);
+
+/** Headline numbers for the stat strip. Derived, so they never go stale. */
+const stats = [
+  { value: all.length, label: 'Articles' },
+  { value: tools.length, label: 'AI tools' },
+  { value: agents.length, label: 'AI agents' },
+  { value: prompts.length, label: 'Prompts' },
+];
+---
+
+<BaseLayout
+  title={`${SITE.name} — ${SITE.tagline}`}
+  description={SITE.description}
+  keywords={[
+    'AI news',
+    'AI tools',
+    'AI agents',
+    'LLMs',
+    'artificial intelligence',
+    'AI tutorials',
+    'prompt engineering',
+  ]}
+  schemaNodes={[
+    collectionPageSchema({
+      path: '/',
+      title: SITE.name,
+      description: SITE.description,
+      items: all.slice(0, 10).map((a) => ({
+        name: a.data.title,
+        href: `/articles/${slugOf(a)}/`,
+      })),
+    }),
+  ]}
+>
+  <Hero articles={featured} />
+
+  {/* ---------- Stat strip ---------- */}
+  <div class="border-b border-[var(--border)] bg-[var(--bg-alt)]">
+    <div class="container-page">
+      <dl class="grid grid-cols-2 divide-x divide-[var(--border)] sm:grid-cols-4">
+        {
+          stats.map((stat) => (
+            <div class="px-4 py-5 text-center">
+              <dt class="sr-only">{stat.label}</dt>
+              <dd>
+                <span class="block text-2xl font-extrabold tabular-nums text-[var(--text)]">
+                  {stat.value}
+                </span>
+                <span
+                  class="mt-0.5 block text-xs font-semibold uppercase tracking-wide text-[var(--text-subtle)]"
+                  aria-hidden="true"
+                >
+                  {stat.label}
+                </span>
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </div>
+
+  <div class="container-page py-12 sm:py-16">
+    <div class="grid gap-12 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-10">
+      {/* ================= Main column ================= */}
+      <div class="space-y-16">
+        {/* ---------- Trending AI News ---------- */}
+        {
+          latestNews.length > 0 && (
+            <section aria-labelledby="home-news">
+              <SectionHeading
+                title="Trending AI News"
+                id="home-news"
+                description={CONTENT_TYPES.news.description}
+                href="/news"
+              />
+              <div class="grid gap-5 sm:grid-cols-2">
+                {latestNews.map((article) => (
+                  <ArticleCard article={article} variant="default" headingLevel={3} />
+                ))}
+              </div>
+            </section>
+          )
+        }
+
+        {/* ---------- Featured Guides ---------- */}
+        {
+          picks.length > 0 && (
+            <section aria-labelledby="home-picks">
+              <SectionHeading
+                title="Featured Guides"
+                id="home-picks"
+                description="The pieces we would hand someone joining an AI team on their first week."
+                href="/articles"
+              />
+              <div class="grid gap-5 sm:grid-cols-3">
+                {picks.map((article) => (
+                  <ArticleCard article={article} variant="default" headingLevel={3} />
+                ))}
+              </div>
+            </section>
+          )
+        }
+
+        {/* ---------- Latest AI Tools ---------- */}
+        {
+          SITE.features.toolDirectory && topTools.length > 0 && (
+            <section aria-labelledby="home-tools">
+              <SectionHeading
+                title="Latest AI Tools"
+                id="home-tools"
+                description="Assessed against the same criteria, with the limitations listed alongside the strengths."
+                href="/tools"
+                linkLabel="Full directory"
+              />
+              <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {topTools.map((tool) => (
+                  <DirectoryCard item={tool} base="tools" />
+                ))}
+              </div>
+            </section>
+          )
+        }
+
+        {/* ---------- Top AI Agents ---------- */}
+        {
+          SITE.features.agentDirectory && topAgents.length > 0 && (
+            <section aria-labelledby="home-agents">
+              <SectionHeading
+                title="Top AI Agents"
+                id="home-agents"
+                description="Agents that plan, call tools and act — with their runtime, autonomy level and MCP support noted."
+                href="/agents"
+                linkLabel="Full directory"
+              />
+              <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {topAgents.map((agent) => (
+                  <DirectoryCard item={agent} base="agents" />
+                ))}
+              </div>
+            </section>
+          )
+        }
+
+        {/* ---------- Popular Tutorials ---------- */}
+        {
+          latestTutorials.length > 0 && (
+            <section aria-labelledby="home-tutorials">
+              <SectionHeading
+                title="Popular Tutorials"
+                id="home-tutorials"
+                description={CONTENT_TYPES.guide.description}
+                href="/tutorials"
+              />
+              <div class="grid gap-5 sm:grid-cols-3">
+                {latestTutorials.map((article) => (
+                  <ArticleCard article={article} variant="default" headingLevel={3} />
+                ))}
+              </div>
+            </section>
+          )
+        }
+
+        {/* ---------- Latest Reviews ---------- */}
+        {
+          latestReviews.length > 0 && (
+            <section aria-labelledby="home-reviews">
+              <SectionHeading
+                title="Latest Reviews"
+                id="home-reviews"
+                description={CONTENT_TYPES.review.description}
+                href="/reviews"
+              />
+              <div class="space-y-4">
+                {latestReviews.map((article) => (
+                  <ArticleCard article={article} variant="list" headingLevel={3} />
+                ))}
+              </div>
+            </section>
+          )
+        }
+      </div>
+
+      {/* ================= Sidebar ================= */}
+      <aside class="space-y-10" aria-label="Trending topics and prompts">
+        {
+          trending.length > 0 && (
+            <section aria-labelledby="home-trending">
+              <h2
+                id="home-trending"
+                class="mb-4 text-xs font-bold uppercase tracking-wider text-[var(--text)]"
+              >
+                Trending Now
+              </h2>
+              <ol class="space-y-4">
+                {trending.map((article, index) => (
+                  <li class="flex gap-3">
+                    <span
+                      class="shrink-0 text-lg font-extrabold tabular-nums text-[var(--border-strong)]"
+                      aria-hidden="true"
+                    >
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                    <ArticleCard
+                      article={article}
+                      variant="compact"
+                      headingLevel={3}
+                      class="flex-1"
+                    />
+                  </li>
+                ))}
+              </ol>
+            </section>
+          )
+        }
+
+        {/* ---------- Prompt Library teaser ---------- */}
+        {
+          SITE.features.promptLibrary && topPrompts.length > 0 && (
+            <section aria-labelledby="home-prompts">
+              <h2
+                id="home-prompts"
+                class="mb-4 text-xs font-bold uppercase tracking-wider text-[var(--text)]"
+              >
+                From the Prompt Library
+              </h2>
+              <ul class="space-y-3">
+                {topPrompts.map((prompt) => (
+                  <li>
+                    <a
+                      href={promptUrl(prompt)}
+                      class="glass block p-4 transition hover:border-[var(--border-strong)]"
+                    >
+                      <span class="block text-sm font-bold leading-snug text-[var(--text)]">
+                        {prompt.data.title}
+                      </span>
+                      <span class="clamp-2 mt-1 block text-xs leading-relaxed text-[var(--text-muted)]">
+                        {prompt.data.description}
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+              <a
+                href="/prompts"
+                class="mt-3 inline-block text-sm font-semibold text-[var(--color-primary)] hover:opacity-75"
+              >
+                Browse all prompts <span aria-hidden="true">&rarr;</span>
+              </a>
+            </section>
+          )
+        }
+      </aside>
+    </div>
+
+    {/* ---------- Categories grid ---------- */}
+    <section class="mt-16" aria-labelledby="home-categories">
+      <SectionHeading
+        title="Browse by Topic"
+        id="home-categories"
+        description={`All ${CATEGORIES.length} topics we publish into — models, labs, tooling and applied AI.`}
+        href="/categories"
+        linkLabel="All topics"
+      />
+      <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          featuredCategories.map((category) => (
+            <CategoryCard category={category} count={counts.get(category.slug) ?? 0} />
+          ))
+        }
+      </div>
+    </section>
+  </div>
+
+  {/* ---------- Newsletter ---------- */}
+  {
+    SITE.features.newsletter && (
+      <div class="border-t border-[var(--border)] bg-[var(--bg-alt)]">
+        <div class="container-page py-12">
+          <Newsletter variant="banner" />
+        </div>
+      </div>
+    )
+  }
+</BaseLayout>

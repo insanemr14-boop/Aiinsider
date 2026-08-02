@@ -1,0 +1,234 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { SITE } from '../config/site.config';
+---
+
+<PageLayout
+  title="Editorial Policy"
+  description={`How ${SITE.name} researches, tests, reviews, sources, corrects and discloses — the standards every published article and directory listing is held to.`}
+  lede="The standards every article, review and directory listing on this site is held to."
+  lastUpdated={new Date('2026-08-02')}
+>
+  <h2>Purpose</h2>
+  <p>
+    {SITE.name} exists to help people who build with AI make better decisions faster. That
+    means accuracy over speed, specificity over hedging, and usefulness over engagement. If
+    a piece would get more traffic by overstating what a model can do, it gets published
+    understated instead.
+  </p>
+
+  <h2>Accuracy and sourcing</h2>
+  <ul>
+    <li>
+      Claims are checked against <strong>primary sources</strong> — model cards, official
+      documentation, published papers, release notes, pricing pages, source repositories, or
+      our own testing. Secondary coverage is a lead, not a source.
+    </li>
+    <li>
+      <strong>We do not invent numbers.</strong> Benchmark scores, prices, context-window
+      sizes, funding amounts, parameter counts, version numbers and dates are either
+      verified and attributed, or they do not appear. If we cannot attribute a figure, we
+      describe the situation qualitatively instead — "materially cheaper per token" rather
+      than a made-up dollar figure.
+    </li>
+    <li>
+      Benchmark results are reported with their source and, where it matters, the conditions
+      they were produced under. Numbers from different harnesses are not presented as
+      directly comparable.
+    </li>
+    <li>
+      Pricing is usually described as tiers — free, individual, team, enterprise — because
+      exact figures go stale within weeks. Where we do cite a price, it carries the date it
+      was checked.
+    </li>
+    <li>
+      Vendor marketing claims are labeled as vendor claims until they are independently
+      verifiable.
+    </li>
+    <li>
+      Where something is genuinely uncertain, contested or moving, we say so in the text.
+      Hedged accuracy beats confident invention.
+    </li>
+    <li>
+      We do not fabricate quotes or attribute statements to named people who did not make
+      them.
+    </li>
+  </ul>
+
+  <h2>Durability over volatility</h2>
+  <p>
+    Version numbers and prices change monthly; architecture, evaluation methodology and
+    failure modes do not. We deliberately weight articles toward the durable half of a
+    subject, so a piece stays useful after the next model release rather than becoming
+    wrong.
+  </p>
+
+  <h2>How we test</h2>
+  <p>
+    <a href="/reviews/">Reviews</a> and <a href="/comparisons/">comparisons</a> are based on
+    hands-on use, not feature tables copied from a pricing page. Our approach:
+  </p>
+  <ul>
+    <li>
+      Tools are tested on realistic tasks in their category — an AI coding assistant against
+      an actual codebase, an agent framework against a multi-step task with real tool calls,
+      a RAG stack against a corpus with awkward documents in it.
+    </li>
+    <li>
+      Competing tools in the same comparison get the same tasks, the same prompts where
+      applicable, and comparable effort spent on configuration.
+    </li>
+    <li>
+      We use the tier a normal reader would use. Where an enterprise tier changes the answer,
+      we say which tier we tested.
+    </li>
+    <li>
+      We record what broke. A review that finds no weaknesses has not been done properly.
+    </li>
+    <li>
+      Code in <a href="/tutorials/">tutorials</a> is run before publication. If a snippet
+      depends on a specific SDK version or model, that is stated.
+    </li>
+  </ul>
+
+  <h2>Ratings</h2>
+  <p>
+    Where a tool carries a rating, it is an editorial judgment made against consistent
+    criteria within its category — capability on the core job, output quality, reliability,
+    developer experience and documentation, integration surface, transparency about data
+    handling, and value for the price. Categories are rated against their own peers: a
+    specialized tool is not marked down for lacking features it was never meant to have.
+  </p>
+  <p>
+    Ratings are set by the desk that tested the tool. They are never set by, negotiated
+    with, or sold to a vendor. Ratings can move up or down when we retest, and a retest is
+    triggered by a major release or by credible reader reports that a tool has changed.
+  </p>
+
+  <h2>How tools get into the directories</h2>
+  <p>
+    Entries in the <a href="/tools/">AI tool directory</a> and the
+    <a href="/agents/">AI agent directory</a> come from three routes: our own tracking of
+    the space, reader recommendations, and vendor submissions via the
+    <a href="/contact/">contact page</a>. All three are assessed the same way.
+  </p>
+  <p>To be listed, a tool must:</p>
+  <ul>
+    <li>Be publicly available and usable — not a waitlist page or an unreleased demo.</li>
+    <li>Do something meaningfully distinct within its category.</li>
+    <li>Publish enough about pricing and data handling for a reader to evaluate it.</li>
+    <li>Be functional when we check it. Abandoned and broken tools get removed.</li>
+  </ul>
+  <p>
+    Listings are free, and inclusion cannot be purchased. Ordering reflects editorial
+    assessment and relevance, never payment. Some outbound links are affiliate links, which
+    does not affect inclusion, ordering or rating — the full position is in the
+    <a href="/disclaimer/">disclaimer</a>. Entries are reviewed periodically and removed
+    when a product is discontinued or no longer meets the bar.
+  </p>
+
+  <h2>Independence and conflicts of interest</h2>
+  <ul>
+    <li>We do not accept payment for coverage, placement, ratings or favorable framing.</li>
+    <li>No vendor, sponsor or advertiser has pre-publication review rights.</li>
+    <li>
+      Advertising and sponsorship, where present, are handled separately from editorial and
+      are visually distinguishable from articles.
+    </li>
+    <li>
+      Anyone contributing to {SITE.name} must declare a financial interest, employment,
+      consulting relationship or equity position in a company they would be writing about.
+      Where a material conflict exists, that person does not write or edit that piece; where
+      coverage is unavoidable, the relationship is disclosed in the article.
+    </li>
+    <li>
+      Free trials, review licenses, API credits and briefing access are accepted so we can
+      test properly, and are disclosed where relevant. They never buy an outcome.
+    </li>
+    <li>
+      Where the interests of a vendor, an advertiser or our own traffic conflict with the
+      interests of a reader trying to make a decision, the reader wins.
+    </li>
+  </ul>
+
+  <h2>AI assistance in our own process</h2>
+  <p>
+    We cover AI, so we should be direct about using it. AI tools may be used for research
+    support, summarizing source documents, drafting, editing and code review inside our
+    workflow.
+  </p>
+  <ul>
+    <li>
+      Every published article is reviewed by a human who is accountable for its factual and
+      technical accuracy.
+    </li>
+    <li>
+      No article is published on the strength of a model's output alone, and no claim
+      originating from a model is published without being traced back to a primary source.
+    </li>
+    <li>
+      Model output is never used to generate benchmark numbers, prices, quotes or citations.
+      Those come from the source or they do not run.
+    </li>
+    <li>
+      Code and configuration in tutorials is executed by a human before publication,
+      regardless of what produced the first draft.
+    </li>
+    <li>We do not accept unsolicited, fully AI-generated article submissions.</li>
+  </ul>
+
+  <h2>Corrections</h2>
+  <ul>
+    <li>Factual errors are corrected as soon as they are confirmed.</li>
+    <li>
+      <strong>Substantive corrections</strong> — anything that changes a conclusion, a
+      rating or a recommendation — are noted on the article with the date of the change.
+    </li>
+    <li>Typographical and formatting fixes are made silently.</li>
+    <li>
+      Articles revised to reflect new model releases or changed pricing carry a visible
+      updated date.
+    </li>
+    <li>
+      Where a claim turns out to be unsupportable, we remove it and say that we removed it,
+      rather than quietly softening it.
+    </li>
+  </ul>
+  <p>
+    Report an error via the <a href="/contact/">contact page</a> or by emailing
+    <a href={`mailto:${SITE.organization.email}`}>{SITE.organization.email}</a> with the
+    article URL and the specific claim.
+  </p>
+
+  <h2>Unpublishing</h2>
+  <p>
+    We do not remove accurate published reporting on request, and we do not delete a
+    negative review because a vendor has since fixed the problem — we retest and update
+    instead. Where a legal or safety concern is raised, we review it, and any resulting
+    change is recorded on the article rather than made silently.
+  </p>
+
+  <h2>Authorship</h2>
+  <p>
+    Articles are attributed to the editorial desk responsible for them — Editorial for news
+    and industry analysis, Research for model and lab coverage, Engineering for tutorials
+    and agent work, Reviews for tools and comparisons. Each desk owns technical review in
+    its area. Attribution is never used to imply credentials that are not held. The desks
+    are described on the <a href="/about/">about page</a>.
+  </p>
+
+  <h2>Sponsored and reader-funded content</h2>
+  <p>
+    If we ever publish sponsored material, it will be labeled as sponsored at the top of the
+    page, excluded from rankings and directory ordering, and written to the same accuracy
+    standard as everything else. It will never be presented as an independent review.
+  </p>
+
+  <h2>Feedback on this policy</h2>
+  <p>
+    This policy is a commitment, not a formality. If you think we have broken it, say so —
+    <a href={`mailto:${SITE.organization.email}`}>{SITE.organization.email}</a>. Related
+    pages: <a href="/about/">about</a>, <a href="/disclaimer/">disclaimer</a> and the
+    <a href="/terms/">terms and conditions</a>.
+  </p>
+</PageLayout>

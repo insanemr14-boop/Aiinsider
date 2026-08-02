@@ -1,0 +1,31 @@
+{
+  "name": "aiinsider",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build && pagefind --site dist",
+    "build:nosearch": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "icons": "node scripts/generate-icons.mjs",
+    "og": "node scripts/generate-og.mjs",
+    "validate": "node scripts/validate-content.mjs"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^7.0.5",
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.3",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^7.1.6",
+    "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "pagefind": "^1.5.2",
+    "sharp": "^0.35.3",
+    "typescript": "^6.0.3"
+  },
+  "description": "AIInsider — Explore the Future of Artificial Intelligence"
+}

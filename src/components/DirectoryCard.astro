@@ -1,0 +1,122 @@
+---
+/**
+ * Card for a directory entry — used by both the AI Tool Directory and the AI
+ * Agent Directory, which share a schema.
+ *
+ * `data-category` and `data-pricing` are read by the client-side filter on the
+ * index pages. Filtering is done by toggling a class on existing DOM rather
+ * than re-rendering, so it stays instant and needs no framework.
+ */
+import type { DirectoryItem } from '../lib/directory';
+import {
+  PRICING_LABELS,
+  RUNTIME_LABELS,
+  AUTONOMY_LABELS,
+  slugOfItem,
+} from '../lib/directory';
+import Rating from './Rating.astro';
+
+interface Props {
+  item: DirectoryItem;
+  /** Which directory this card lives in — sets the detail-page URL prefix. */
+  base: 'tools' | 'agents';
+  headingLevel?: 2 | 3;
+  class?: string;
+}
+
+const { item, base, headingLevel = 3, class: className = '' } = Astro.props;
+
+const d = item.data;
+const href = `/${base}/${slugOfItem(item)}/`;
+const Heading = `h${headingLevel}` as 'h2' | 'h3';
+
+// `runtime` / `autonomy` only exist on agent entries. Reading them off a
+// widened union needs a guard rather than a cast, so a future schema change
+// surfaces here as a type error instead of `undefined` at runtime.
+const isAgent = 'runtime' in d;
+const runtime = isAgent ? RUNTIME_LABELS[d.runtime] : undefined;
+const autonomy = isAgent ? AUTONOMY_LABELS[d.autonomy] : undefined;
+const mcp = isAgent ? d.mcpSupport : false;
+
+/** Monogram fallback — no logo files to fetch, so no layout shift. */
+const monogram = d.name
+  .replace(/[^A-Za-z0-9 ]/g, '')
+  .split(/\s+/)
+  .filter(Boolean)
+  .slice(0, 2)
+  .map((w) => w[0]?.toUpperCase())
+  .join('');
+---
+
+<article
+  data-directory-item
+  data-category={d.category}
+  data-pricing={d.pricing}
+  data-name={d.name.toLowerCase()}
+  class:list={[
+    // `relative` anchors the stretched link on the heading below.
+    'group glass relative flex flex-col p-5 transition-all duration-200',
+    'hover:-translate-y-0.5 hover:border-[var(--border-strong)] hover:shadow-lg hover:shadow-black/5',
+    className,
+  ]}
+>
+  <div class="flex items-start gap-3.5">
+    <span
+      class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br
+             from-[var(--color-grad-from)] to-[var(--color-grad-to)] text-sm font-bold
+             text-white shadow-sm"
+      aria-hidden="true">{monogram}</span>
+
+    <div class="min-w-0 flex-1">
+      <Heading class="text-base font-bold leading-snug tracking-tight text-[var(--text)]">
+        <a href={href} class="after:absolute after:inset-0 hover:text-[var(--color-primary)]">
+          {d.name}
+        </a>
+      </Heading>
+      <p class="mt-0.5 truncate text-xs text-[var(--text-subtle)]">{d.vendor}</p>
+    </div>
+
+    {d.rating !== undefined && <Rating rating={d.rating} class="shrink-0" />}
+  </div>
+
+  <p class="clamp-3 mt-3.5 text-sm leading-relaxed text-[var(--text-muted)]">
+    {d.tagline}
+  </p>
+
+  {/* ---------- Attribute chips ---------- */}
+  <div class="mt-4 flex flex-wrap items-center gap-1.5">
+    <span
+      class="rounded-full bg-[var(--color-primary-soft)] px-2 py-0.5 text-[11px]
+             font-semibold text-[var(--color-primary-hover)] dark:bg-white/10 dark:text-[var(--brand)]"
+    >
+      {d.category}
+    </span>
+    <span
+      class="rounded-full border border-[var(--border)] px-2 py-0.5 text-[11px]
+             font-medium text-[var(--text-muted)]"
+    >
+      {PRICING_LABELS[d.pricing]}
+    </span>
+    {
+      runtime && (
+        <span class="rounded-full border border-[var(--border)] px-2 py-0.5 text-[11px] font-medium text-[var(--text-muted)]">
+          {runtime}
+        </span>
+      )
+    }
+    {
+      autonomy && (
+        <span class="rounded-full border border-[var(--border)] px-2 py-0.5 text-[11px] font-medium text-[var(--text-muted)]">
+          {autonomy}
+        </span>
+      )
+    }
+    {
+      mcp && (
+        <span class="rounded-full bg-violet-500/10 px-2 py-0.5 text-[11px] font-semibold text-violet-600 dark:text-violet-300">
+          MCP
+        </span>
+      )
+    }
+  </div>
+</article>

@@ -1,0 +1,212 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { SITE } from '../config/site.config';
+
+const { googleAnalyticsId, microsoftClarityId, cloudflareAnalyticsToken } = SITE.analytics;
+const analyticsEnabled = Boolean(
+  googleAnalyticsId || microsoftClarityId || cloudflareAnalyticsToken
+);
+---
+
+<PageLayout
+  title="Cookie Policy"
+  description={`Which cookies and local storage ${SITE.name} uses, what each one does, which are optional, and how to control them in your browser.`}
+  lede="What we store on your device, and why."
+  lastUpdated={new Date('2026-08-02')}
+>
+  <div class="not-prose mb-8 rounded-lg border border-[var(--color-warning)]/40 bg-[var(--color-warning)]/10 p-4 text-sm text-[var(--text-muted)]">
+    <strong class="text-[var(--text)]">Note:</strong> this page describes what this
+    deployment actually sets. If you operate the site and enable an analytics provider,
+    update the tables below to match.
+  </div>
+
+  <h2>The short version</h2>
+  <p>
+    {SITE.name} sets <strong>no advertising cookies and no cross-site tracking cookies</strong>.
+    The site is statically hosted and has no reader accounts, so there is no session cookie
+    either. The only thing stored by default is your light/dark theme preference, and it
+    never leaves your browser.
+  </p>
+  <p>
+    {
+      analyticsEnabled
+        ? 'An analytics provider is currently enabled on this deployment, so measurement storage described below may also be present.'
+        : 'No analytics provider is currently configured, so none of the optional analytics storage described below is being set at all.'
+    }
+  </p>
+
+  <h2>Cookie categories</h2>
+  <p>
+    Everything this site could store falls into one of four categories. Two of them are
+    permanently empty.
+  </p>
+
+  <div class="not-prose my-6 overflow-x-auto">
+    <table class="w-full border-collapse text-sm">
+      <thead>
+        <tr class="bg-[var(--bg-alt)]">
+          <th class="border border-[var(--border)] p-2.5 text-left font-semibold">Category</th>
+          <th class="border border-[var(--border)] p-2.5 text-left font-semibold">Used here?</th>
+          <th class="border border-[var(--border)] p-2.5 text-left font-semibold">What it covers</th>
+          <th class="border border-[var(--border)] p-2.5 text-left font-semibold">Consent</th>
+        </tr>
+      </thead>
+      <tbody class="text-[var(--text-muted)]">
+        <tr>
+          <td class="border border-[var(--border)] p-2.5"><strong>Strictly necessary</strong></td>
+          <td class="border border-[var(--border)] p-2.5">Yes</td>
+          <td class="border border-[var(--border)] p-2.5">
+            Bot mitigation and rate limiting set by our CDN so pages can be served safely
+          </td>
+          <td class="border border-[var(--border)] p-2.5">Not required</td>
+        </tr>
+        <tr>
+          <td class="border border-[var(--border)] p-2.5"><strong>Preferences</strong></td>
+          <td class="border border-[var(--border)] p-2.5">Yes</td>
+          <td class="border border-[var(--border)] p-2.5">
+            Your theme choice, stored locally so the site does not flash the wrong mode on
+            the next visit
+          </td>
+          <td class="border border-[var(--border)] p-2.5">Set only when you choose a theme</td>
+        </tr>
+        <tr>
+          <td class="border border-[var(--border)] p-2.5"><strong>Analytics</strong></td>
+          <td class="border border-[var(--border)] p-2.5">
+            {analyticsEnabled ? 'Yes — see below' : 'Not currently'}
+          </td>
+          <td class="border border-[var(--border)] p-2.5">
+            Aggregate page views and interaction data, only if a provider ID is configured
+          </td>
+          <td class="border border-[var(--border)] p-2.5">Optional</td>
+        </tr>
+        <tr>
+          <td class="border border-[var(--border)] p-2.5"><strong>Advertising / tracking</strong></td>
+          <td class="border border-[var(--border)] p-2.5">No</td>
+          <td class="border border-[var(--border)] p-2.5">
+            Ad targeting, retargeting pixels, cross-site profiling — none of this is used
+          </td>
+          <td class="border border-[var(--border)] p-2.5">Never set</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>What is stored, item by item</h2>
+
+  <div class="not-prose my-6 overflow-x-auto">
+    <table class="w-full border-collapse text-sm">
+      <thead>
+        <tr class="bg-[var(--bg-alt)]">
+          <th class="border border-[var(--border)] p-2.5 text-left font-semibold">Name</th>
+          <th class="border border-[var(--border)] p-2.5 text-left font-semibold">Type</th>
+          <th class="border border-[var(--border)] p-2.5 text-left font-semibold">Purpose</th>
+          <th class="border border-[var(--border)] p-2.5 text-left font-semibold">Duration</th>
+        </tr>
+      </thead>
+      <tbody class="text-[var(--text-muted)]">
+        <tr>
+          <td class="border border-[var(--border)] p-2.5"><code>theme</code></td>
+          <td class="border border-[var(--border)] p-2.5">Local storage (first party)</td>
+          <td class="border border-[var(--border)] p-2.5">
+            Remembers whether you chose light or dark mode. Never sent to a server.
+          </td>
+          <td class="border border-[var(--border)] p-2.5">Until you clear it</td>
+        </tr>
+        <tr>
+          <td class="border border-[var(--border)] p-2.5"><code>__cf_bm</code> / <code>_cfuvid</code></td>
+          <td class="border border-[var(--border)] p-2.5">Cookie (Cloudflare)</td>
+          <td class="border border-[var(--border)] p-2.5">
+            Bot management and rate limiting by our hosting provider
+          </td>
+          <td class="border border-[var(--border)] p-2.5">Session / 30 minutes</td>
+        </tr>
+        <tr>
+          <td class="border border-[var(--border)] p-2.5"><code>_ga</code> / <code>_ga_*</code></td>
+          <td class="border border-[var(--border)] p-2.5">Cookie (Google Analytics 4)</td>
+          <td class="border border-[var(--border)] p-2.5">
+            Distinguishes visits for aggregate reporting. Only set if a GA4 measurement ID
+            is configured — {googleAnalyticsId ? 'currently enabled.' : 'currently disabled.'}
+          </td>
+          <td class="border border-[var(--border)] p-2.5">Up to 2 years</td>
+        </tr>
+        <tr>
+          <td class="border border-[var(--border)] p-2.5"><code>_clck</code> / <code>_clsk</code></td>
+          <td class="border border-[var(--border)] p-2.5">Cookie (Microsoft Clarity)</td>
+          <td class="border border-[var(--border)] p-2.5">
+            Aggregate interaction and scroll measurement used to find broken pages. Only set
+            if a Clarity project ID is configured —
+            {microsoftClarityId ? ' currently enabled.' : ' currently disabled.'}
+          </td>
+          <td class="border border-[var(--border)] p-2.5">Up to 1 year / 1 day</td>
+        </tr>
+        <tr>
+          <td class="border border-[var(--border)] p-2.5">None</td>
+          <td class="border border-[var(--border)] p-2.5">Cloudflare Web Analytics</td>
+          <td class="border border-[var(--border)] p-2.5">
+            Cookieless page-view counting. Sets no cookie and no local storage. Only loaded
+            if a beacon token is configured —
+            {cloudflareAnalyticsToken ? ' currently enabled.' : ' currently disabled.'}
+          </td>
+          <td class="border border-[var(--border)] p-2.5">Not applicable</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Optional analytics, in plain terms</h2>
+  <p>
+    Analytics on this site is optional infrastructure. When no provider ID is set in the
+    site configuration, no analytics script is injected into the page and your browser
+    never contacts the provider. When one is set, it is used only to see which articles are
+    read and which pages are broken — never for advertising, never shared with ad networks,
+    and never used to identify you personally. Whatever is active is named in the
+    <a href="/privacy-policy/">privacy policy</a>.
+  </p>
+
+  <h2>Third-party requests</h2>
+  <p>
+    Web fonts are requested from Google Fonts. This sets no cookie, but the request
+    necessarily discloses your IP address to that service as a technical consequence of
+    delivering the font file. Embedded content, where an article includes it, may set
+    cookies under the embedding provider's own policy.
+  </p>
+
+  <h2>How to control this</h2>
+  <ul>
+    <li>
+      <strong>Block or delete cookies</strong> — every major browser supports this under
+      Privacy or Site Settings, per site or globally.
+    </li>
+    <li>
+      <strong>Clear local storage</strong> — this resets your theme preference, after which
+      the site follows your operating system setting again.
+    </li>
+    <li>
+      <strong>Opt out of GA4 specifically</strong> — Google publishes a browser add-on that
+      blocks its analytics scripts everywhere, if that provider is ever enabled here.
+    </li>
+    <li>
+      <strong>Use a content blocker</strong> — a standard tracker blocker removes the
+      optional analytics requests entirely.
+    </li>
+  </ul>
+  <p>
+    Nothing on this site breaks if you block all storage. Articles, the
+    <a href="/tools/">tool directory</a>, <a href="/search/">search</a> and the
+    <a href="/rss.xml">RSS feed</a> all work without it. The only visible difference is
+    that your theme choice will not persist between visits.
+  </p>
+
+  <h2>Do Not Track and Global Privacy Control</h2>
+  <p>
+    We do not perform cross-site tracking, so a DNT or GPC signal changes nothing about how
+    we treat you. There is no profile to opt out of.
+  </p>
+
+  <h2>Contact</h2>
+  <p>
+    Questions about anything on this page:
+    <a href={`mailto:${SITE.organization.email}`}>{SITE.organization.email}</a>, or use the
+    <a href="/contact/">contact page</a>.
+  </p>
+</PageLayout>

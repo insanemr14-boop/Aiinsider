@@ -1,0 +1,75 @@
+---
+/**
+ * Star rating for directory entries.
+ *
+ * The visible stars are decorative — the accessible name comes from the
+ * adjacent text and the `aria-label`, so a screen reader hears "Rated 4.5 out
+ * of 5" rather than five separate star glyphs.
+ */
+import { starStates } from '../lib/directory';
+
+interface Props {
+  rating: number;
+  /** Renders the numeric value beside the stars. */
+  showValue?: boolean;
+  size?: 'sm' | 'md';
+  class?: string;
+}
+
+const { rating, showValue = true, size = 'sm', class: className = '' } = Astro.props;
+
+const states = starStates(rating);
+const px = size === 'md' ? 18 : 14;
+---
+
+<div class={`inline-flex items-center gap-1.5 ${className}`}>
+  <div
+    class="inline-flex items-center gap-0.5"
+    role="img"
+    aria-label={`Rated ${rating} out of 5`}
+  >
+    {
+      states.map((state) => (
+        <svg
+          width={px}
+          height={px}
+          viewBox="0 0 24 24"
+          fill="none"
+          aria-hidden="true"
+          class="shrink-0"
+        >
+          {state === 'half' && (
+            <defs>
+              <linearGradient id={`half-${rating}`}>
+                <stop offset="50%" stop-color="currentColor" />
+                <stop offset="50%" stop-color="transparent" />
+              </linearGradient>
+            </defs>
+          )}
+          <path
+            d="M12 3.5l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.7l5.9-.9L12 3.5z"
+            fill={
+              state === 'full'
+                ? 'currentColor'
+                : state === 'half'
+                  ? `url(#half-${rating})`
+                  : 'none'
+            }
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linejoin="round"
+            class={state === 'empty' ? 'text-[var(--border-strong)]' : 'text-amber-500'}
+          />
+        </svg>
+      ))
+    }
+  </div>
+
+  {
+    showValue && (
+      <span class="text-xs font-semibold tabular-nums text-[var(--text-muted)]">
+        {rating.toFixed(1)}
+      </span>
+    )
+  }
+</div>

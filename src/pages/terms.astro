@@ -1,0 +1,175 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { SITE } from '../config/site.config';
+---
+
+<PageLayout
+  title={'Terms & Conditions'}
+  description={`The terms governing use of ${SITE.name} — acceptable use, intellectual property, AI content disclaimers, directory listings and limitation of liability.`}
+  lede="The rules for using this site."
+  lastUpdated={new Date('2026-08-02')}
+>
+  <div class="not-prose mb-8 rounded-lg border border-[var(--color-warning)]/40 bg-[var(--color-warning)]/10 p-4 text-sm text-[var(--text-muted)]">
+    <strong class="text-[var(--text)]">Note:</strong> these terms are written in good faith
+    and describe how this site is actually operated, but they are not legal advice. If you
+    operate this site, have them reviewed by a qualified practitioner in your jurisdiction.
+  </div>
+
+  <h2>1. Acceptance</h2>
+  <p>
+    By accessing <strong>{SITE.domain}</strong> you agree to these terms. If you do not
+    agree, do not use the site. These terms apply to every part of {SITE.name}, including
+    the article archive, the <a href="/tools/">tool directory</a>, the
+    <a href="/agents/">agent directory</a>, the <a href="/prompts/">prompt library</a> and
+    the <a href="/resources/">resources</a> section.
+  </p>
+
+  <h2>2. Purpose of the content</h2>
+  <p>
+    All content is published for <strong>informational and educational purposes</strong>.
+    It is general information about AI models, tools and techniques — not professional,
+    legal, financial, tax, medical or engineering advice, and not a substitute for an
+    assessment of your own systems, contracts or obligations by a qualified practitioner.
+  </p>
+
+  <h2>3. AI-specific content disclaimer</h2>
+  <p>
+    Artificial intelligence is a fast-moving subject. Model versions, context limits,
+    pricing tiers, rate limits, license terms and vendor policies change frequently and
+    often without notice. An article that was accurate on its publication date may be out
+    of date by the time you read it.
+  </p>
+  <ul>
+    <li>
+      Always verify model capabilities, pricing and license terms against the vendor's own
+      current documentation before making a commercial or architectural decision.
+    </li>
+    <li>
+      Outputs from AI systems can be wrong, biased or fabricated. Any code, prompt or
+      workflow published here should be tested and reviewed by a competent human before it
+      touches production, customer data or anything with money attached.
+    </li>
+    <li>
+      Nothing published here is a guarantee that a model, agent or tool will behave the way
+      it did during our testing. Model behavior changes when the vendor changes the model.
+    </li>
+    <li>
+      You are responsible for complying with the terms of service of any third-party AI
+      provider you use, and with any law that applies to how you use its output.
+    </li>
+  </ul>
+
+  <h2>4. Acceptable use</h2>
+  <p>You agree not to:</p>
+  <ul>
+    <li>Scrape, mirror or bulk-republish the content, including for the purpose of training a model, without written permission.</li>
+    <li>Attempt to disrupt, overload or compromise the site or its infrastructure.</li>
+    <li>Use the content to build a competing directory or dataset by automated extraction.</li>
+    <li>Misrepresent our content as your own, or present a mention or listing as an endorsement of your product.</li>
+    <li>Submit false, misleading or spam entries to the directories or the prompt library.</li>
+    <li>Use the site in any way that breaks the law where you are.</li>
+  </ul>
+
+  <h2>5. Intellectual property</h2>
+  <p>
+    Articles, artwork, ratings and site design are &copy; {new Date().getFullYear()}
+    {' '}{SITE.organization.legalName} unless stated otherwise. You may quote short extracts
+    with clear attribution and a link to the source article. Republishing whole articles, or
+    reproducing the directory data in bulk, requires written permission.
+  </p>
+  <p>
+    Code samples and prompts published in articles and in the
+    <a href="/prompts/">prompt library</a> may be used freely in your own projects, with no
+    attribution required and no warranty attached. Third-party names, logos and trademarks
+    referenced remain the property of their owners; their use here is nominative and does
+    not imply any affiliation or endorsement.
+  </p>
+
+  <h2>6. Submissions</h2>
+  <p>
+    If you send us a tip, a directory submission, a prompt or feedback, you confirm you have
+    the right to send it and you grant us a non-exclusive, royalty-free license to publish
+    and adapt it as part of the site. We are not obliged to publish anything you send, and
+    we may edit submissions for accuracy, length and house style. We do not treat
+    unsolicited submissions as confidential.
+  </p>
+
+  <h2>7. Third-party links and directory listings</h2>
+  <p>
+    We link to vendors, documentation, repositories and research. We do not control those
+    destinations and are not responsible for their content, accuracy, availability,
+    security or terms.
+  </p>
+  <p>
+    A listing in the tool or agent directory is an editorial judgment made at a point in
+    time. It is not an endorsement, a certification, a guarantee of quality or safety, and
+    not a recommendation to purchase. Listings are not paid for. Some outbound links may be
+    affiliate links, which is explained in the <a href="/disclaimer/">disclaimer</a>. Your
+    dealings with any third party are entirely between you and that third party.
+  </p>
+
+  <h2>8. Availability</h2>
+  <p>
+    The site is provided "as is" and "as available". We do not guarantee uninterrupted
+    access, and we may change, update, suspend or remove content, listings or entire
+    sections at any time without notice.
+  </p>
+
+  <h2>9. Disclaimer of warranties</h2>
+  <p>
+    To the maximum extent permitted by law, we disclaim all warranties, express or implied,
+    including merchantability, fitness for a particular purpose, accuracy and
+    non-infringement. We do not warrant that the content is complete, current or free of
+    error, nor that the site is free of harmful components. See the full
+    <a href="/disclaimer/">disclaimer</a>.
+  </p>
+
+  <h2>10. Limitation of liability</h2>
+  <p>
+    To the maximum extent permitted by law, {SITE.organization.legalName} is not liable for
+    any indirect, incidental, consequential, special or punitive damages, or for any loss of
+    data, profits, revenue, goodwill or business, arising from your use of this site,
+    reliance on its content, or your dealings with any third-party tool or vendor referenced
+    here. Where liability cannot be excluded, it is limited to the amount you paid us to
+    access the content, which for the public site is nothing.
+  </p>
+
+  <h2>11. Indemnity</h2>
+  <p>
+    You agree to indemnify us against claims arising from your misuse of the site, your
+    breach of these terms, or your infringement of a third party's rights.
+  </p>
+
+  <h2>12. Changes to these terms</h2>
+  <p>
+    We may update these terms as the site changes. The revised version takes effect when it
+    is published, and the "last updated" date above will change. Continued use after that
+    point constitutes acceptance of the revised terms.
+  </p>
+
+  <h2>13. Governing law</h2>
+  <p>
+    These terms are governed by the laws of the jurisdiction in which the publisher is
+    established, and any dispute is subject to the exclusive jurisdiction of the courts of
+    that place. Nothing in these terms removes a mandatory consumer protection right you
+    have under the law of your own country of residence.
+  </p>
+  <!--
+    Owner: replace the paragraph above with your actual jurisdiction once the publishing
+    entity is registered, e.g. "the laws of [Your jurisdiction]" and the courts of
+    [Your jurisdiction]. Do not leave this generic if you need it to be enforceable.
+  -->
+
+  <h2>14. Severability</h2>
+  <p>
+    If any provision of these terms is found unenforceable, the remaining provisions stay in
+    force.
+  </p>
+
+  <h2>15. Contact</h2>
+  <p>
+    Questions about these terms:
+    <a href={`mailto:${SITE.organization.email}`}>{SITE.organization.email}</a>, or via the
+    <a href="/contact/">contact page</a>.
+  </p>
+</PageLayout>

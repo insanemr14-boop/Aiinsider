@@ -1,0 +1,60 @@
+{
+  "name": "AIInsider",
+  "short_name": "AIInsider",
+  "description": "AI news, tools, agents and tutorials — explore the future of artificial intelligence.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#6366f1",
+  "lang": "en",
+  "categories": [
+    "news",
+    "education",
+    "technology"
+  ],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "AI News",
+      "url": "/news/"
+    },
+    {
+      "name": "AI Tools",
+      "url": "/tools/"
+    },
+    {
+      "name": "AI Agents",
+      "url": "/agents/"
+    },
+    {
+      "name": "Prompt Library",
+      "url": "/prompts/"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import DirectoryLayout from '../../layouts/DirectoryLayout.astro';
+import {
+  getAgents,
+  relatedItems,
+  slugOfItem,
+  type AgentEntry,
+} from '../../lib/directory';
+
+export const getStaticPaths = (async () => {
+  const agents = await getAgents();
+  return agents.map((agent) => ({
+    params: { slug: slugOfItem(agent) },
+    props: { agent, related: relatedItems(agent, agents, 3) },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  agent: AgentEntry;
+  related: AgentEntry[];
+}
+
+const { agent, related } = Astro.props;
+const { Content } = await render(agent);
+---
+
+<DirectoryLayout item={agent} base="agents" baseLabel="AI Agents" related={related}>
+  <Content />
+</DirectoryLayout>
