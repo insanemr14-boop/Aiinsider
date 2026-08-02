@@ -36,12 +36,32 @@ export interface SiteConfig {
     foundingYear: number;
     email: string;
     logoPath: string;
+    /** The company that operates this publication, if different from the brand. */
+    operatedBy?: string;
+    telephone?: string;
+    /** Postal address. Fields left undefined are simply omitted from the JSON-LD. */
+    address?: {
+      street?: string;
+      locality: string;
+      region?: string;
+      postalCode?: string;
+      /** ISO 3166-1 alpha-2. */
+      country: string;
+      countryName: string;
+    };
+    /** Freeform opening hours shown on the contact page. */
+    hours?: string;
+    /** Stated first-response target, shown on the contact page. */
+    responseTime?: string;
   };
   social: {
     twitter?: string;
     twitterHandle?: string;
     github?: string;
     linkedin?: string;
+    instagram?: string;
+    /** Full wa.me link, including country code. */
+    whatsapp?: string;
     mastodon?: string;
     rss: string;
   };
@@ -99,14 +119,24 @@ export const SITE: SiteConfig = {
   organization: {
     legalName: 'AIInsider',
     foundingYear: 2026,
-    email: 'editorial@aiinsider.qd.je',
+    email: 'info@riocloudsolutions.com',
     logoPath: '/logo.svg',
+    operatedBy: 'RioCloud Solutions',
+    telephone: '+91 75085 83782',
+    address: {
+      locality: 'Chandigarh',
+      country: 'IN',
+      countryName: 'India',
+    },
+    hours: 'Monday to Saturday, 9:00–19:00 IST',
+    responseTime: '2–4 hours during business hours (IST)',
   },
 
   social: {
-    twitter: 'https://twitter.com/aiinsider',
-    twitterHandle: '@aiinsider',
     github: 'https://github.com/insanemr14-boop/Aiinsider',
+    linkedin: 'https://www.linkedin.com/company/rio-cloud-solutions',
+    instagram: 'https://www.instagram.com/riocloud.in',
+    whatsapp: 'https://wa.me/917508583782',
     rss: '/rss.xml',
   },
 

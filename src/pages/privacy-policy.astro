@@ -23,13 +23,22 @@ const analyticsEnabled = Boolean(
   <h2>Who we are</h2>
   <p>
     {SITE.organization.legalName} publishes <strong>{SITE.domain}</strong> — AI news, tools
-    coverage, tutorials and reviews. For any privacy question or data request, email
-    <a href={`mailto:${SITE.organization.email}`}>{SITE.organization.email}</a>.
+    coverage, tutorials and reviews. The site is operated by
+    <strong>{SITE.organization.operatedBy ?? SITE.organization.legalName}</strong>
+    {SITE.organization.address
+      ? `, based in ${SITE.organization.address.locality}, ${SITE.organization.address.countryName}`
+      : ''}, which is the data controller for any personal data described below.
+  </p>
+  <p>
+    For any privacy question or data request, email
+    <a href={`mailto:${SITE.organization.email}`}>{SITE.organization.email}</a>
+    {SITE.organization.telephone ? ` or call ${SITE.organization.telephone}` : ''}. Full
+    contact routes are on the <a href="/contact/">contact page</a>.
   </p>
   <!--
-    Owner: if you are required to publish a registered address or a named data controller
-    entity, add it here: [Your registered address] / [Your registered legal entity].
-    If you appoint a Data Protection Officer or an EU/UK representative, list them too.
+    Owner: if you are required to publish a full registered street address, a company
+    registration number, or a named Data Protection Officer / EU-UK representative, add
+    them here. Locality and country are set in src/config/site.config.ts.
   -->
 
   <h2>How the site is hosted</h2>

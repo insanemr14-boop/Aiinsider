@@ -149,15 +149,18 @@ import { SITE } from '../config/site.config';
 
   <h2>13. Governing law</h2>
   <p>
-    These terms are governed by the laws of the jurisdiction in which the publisher is
-    established, and any dispute is subject to the exclusive jurisdiction of the courts of
-    that place. Nothing in these terms removes a mandatory consumer protection right you
-    have under the law of your own country of residence.
+    These terms are governed by the laws of
+    {SITE.organization.address ? ` ${SITE.organization.address.countryName}` : ' the country in which the publisher is established'},
+    and any dispute is subject to the exclusive jurisdiction of the courts of
+    {SITE.organization.address
+      ? ` ${SITE.organization.address.locality}, ${SITE.organization.address.countryName}`
+      : ' that place'}. Nothing in these terms removes a mandatory consumer protection
+    right you have under the law of your own country of residence.
   </p>
   <!--
-    Owner: replace the paragraph above with your actual jurisdiction once the publishing
-    entity is registered, e.g. "the laws of [Your jurisdiction]" and the courts of
-    [Your jurisdiction]. Do not leave this generic if you need it to be enforceable.
+    Owner: this now names the operating company's jurisdiction from site.config.ts. If the
+    publishing entity is registered somewhere other than its operating location, or you
+    want a specific court named, have a lawyer set the exact wording before you rely on it.
   -->
 
   <h2>14. Severability</h2>

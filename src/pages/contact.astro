@@ -2,7 +2,19 @@
 import PageLayout from '../layouts/PageLayout.astro';
 import { SITE } from '../config/site.config';
 
-const email = SITE.organization.email;
+const org = SITE.organization;
+const email = org.email;
+
+// Assembled from the config so the contact block, the footer and the
+// Organization JSON-LD can never disagree with each other.
+const addressLine = org.address
+  ? [org.address.street, org.address.locality, org.address.region, org.address.postalCode, org.address.countryName]
+      .filter(Boolean)
+      .join(', ')
+  : null;
+
+/** Telephone stripped to digits and `+` for a dialable href. */
+const telHref = org.telephone ? `tel:${org.telephone.replace(/[^\d+]/g, '')}` : null;
 ---
 
 <PageLayout
@@ -16,7 +28,90 @@ const email = SITE.organization.email;
     message gets routed to the right desk faster.
   </p>
 
-  <!-- Owner: if you add a postal address later, put it here. [Your registered address] -->
+  <h2>Contact details</h2>
+  <table>
+    <tbody>
+      <tr>
+        <th scope="row">Email</th>
+        <td><a href={`mailto:${email}`}>{email}</a></td>
+      </tr>
+      {
+        org.telephone && telHref && (
+          <tr>
+            <th scope="row">Phone</th>
+            <td><a href={telHref}>{org.telephone}</a></td>
+          </tr>
+        )
+      }
+      {
+        SITE.social.whatsapp && (
+          <tr>
+            <th scope="row">WhatsApp</th>
+            <td>
+              <a href={SITE.social.whatsapp} rel="noopener" target="_blank">
+                Message us on WhatsApp
+              </a>
+            </td>
+          </tr>
+        )
+      }
+      {
+        addressLine && (
+          <tr>
+            <th scope="row">Address</th>
+            <td>{addressLine}</td>
+          </tr>
+        )
+      }
+      {
+        org.hours && (
+          <tr>
+            <th scope="row">Hours</th>
+            <td>{org.hours}</td>
+          </tr>
+        )
+      }
+      {
+        org.responseTime && (
+          <tr>
+            <th scope="row">Typical reply</th>
+            <td>{org.responseTime}</td>
+          </tr>
+        )
+      }
+      {
+        (SITE.social.linkedin || SITE.social.instagram) && (
+          <tr>
+            <th scope="row">Social</th>
+            <td>
+              {SITE.social.linkedin && (
+                <a href={SITE.social.linkedin} rel="noopener" target="_blank">
+                  LinkedIn
+                </a>
+              )}
+              {SITE.social.linkedin && SITE.social.instagram && ' · '}
+              {SITE.social.instagram && (
+                <a href={SITE.social.instagram} rel="noopener" target="_blank">
+                  Instagram
+                </a>
+              )}
+            </td>
+          </tr>
+        )
+      }
+    </tbody>
+  </table>
+
+  {
+    org.operatedBy && (
+      <p>
+        {SITE.name} is published and operated by <strong>{org.operatedBy}</strong>
+        {addressLine ? `, ${addressLine}` : ''}. Commercial and editorial enquiries both go
+        to the address above — see the <a href="/disclaimer/">disclaimer</a> for how the two
+        are kept separate.
+      </p>
+    )
+  }
 
   <h2>Story tips and pitches</h2>
   <p>
@@ -96,8 +191,11 @@ const email = SITE.organization.email;
 
   <h2>Response times</h2>
   <p>
-    This is a small desk. Security reports and corrections are triaged within two business
-    days; everything else may take longer. We read everything and reply to anything that
-    needs a reply.
+    Commercial and general enquiries are typically answered within
+    {org.responseTime ? ` ${org.responseTime}` : ' one business day'}
+    {org.hours ? `, ${org.hours.toLowerCase()}` : ''}. Editorial work runs on a slower
+    clock: security reports and corrections are triaged within two business days, and
+    tips, pitches and directory submissions may take longer. We read everything and reply
+    to anything that needs a reply.
   </p>
 </PageLayout>

@@ -24,26 +24,56 @@ export const ID = {
 };
 
 export function organizationSchema() {
+  const org = SITE.organization;
+
   return {
     '@type': 'Organization',
     '@id': ID.organization,
-    name: SITE.organization.legalName,
+    name: org.legalName,
     alternateName: SITE.shortName,
     url: SITE.url,
     description: SITE.description,
-    foundingDate: String(SITE.organization.foundingYear),
-    email: SITE.organization.email,
+    foundingDate: String(org.foundingYear),
+    email: org.email,
+    ...(org.telephone && { telephone: org.telephone }),
+    ...(org.operatedBy && {
+      parentOrganization: { '@type': 'Organization', name: org.operatedBy },
+    }),
+    ...(org.address && {
+      address: {
+        '@type': 'PostalAddress',
+        ...(org.address.street && { streetAddress: org.address.street }),
+        addressLocality: org.address.locality,
+        ...(org.address.region && { addressRegion: org.address.region }),
+        ...(org.address.postalCode && { postalCode: org.address.postalCode }),
+        addressCountry: org.address.country,
+      },
+    }),
+    // A contactPoint is what Google reads for the "Contact" action; the bare
+    // email/telephone fields above are not enough on their own.
+    contactPoint: {
+      '@type': 'ContactPoint',
+      contactType: 'customer support',
+      email: org.email,
+      ...(org.telephone && { telephone: org.telephone }),
+      ...(org.hours && { hoursAvailable: org.hours }),
+      availableLanguage: ['English'],
+      url: `${SITE.url}/contact/`,
+    },
     logo: {
       '@type': 'ImageObject',
       '@id': `${SITE.url}/#logo`,
-      url: abs(SITE.organization.logoPath),
-      contentUrl: abs(SITE.organization.logoPath),
+      url: abs(org.logoPath),
+      contentUrl: abs(org.logoPath),
       caption: SITE.name,
     },
     image: { '@id': `${SITE.url}/#logo` },
-    sameAs: [SITE.social.twitter, SITE.social.github, SITE.social.linkedin].filter(
-      Boolean
-    ),
+    sameAs: [
+      SITE.social.twitter,
+      SITE.social.github,
+      SITE.social.linkedin,
+      SITE.social.instagram,
+    ].filter(Boolean),
   };
 }
 
