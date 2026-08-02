@@ -29,13 +29,17 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Configure Pages
-        # `enablement: true` creates the Pages site on the first run, so the
-        # repo does not need Settings -> Pages touched by hand. Without it the
-        # deploy job fails instantly with "Not Found" against the Pages API.
+        # Best-effort auto-enablement. The built-in GITHUB_TOKEN is not an
+        # admin token, so creating the Pages site this way only works on repos
+        # that already permit it — hence `continue-on-error`. A build must not
+        # be blocked by an optional convenience step: if this fails, the site
+        # still builds and uploads, and the deploy succeeds as soon as Pages is
+        # switched on under Settings -> Pages -> Source: GitHub Actions.
         #
         # The custom domain is NOT set here — it comes from `public/CNAME`,
         # which Astro copies into dist/ and Pages reads on publish.
         uses: actions/configure-pages@v5
+        continue-on-error: true
         with:
           enablement: true
 
