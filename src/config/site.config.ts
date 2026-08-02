@@ -114,7 +114,7 @@ export const SITE: SiteConfig = {
   // GA4 looks like 'G-XXXXXXXXXX'; Clarity is a 10-character project id.
   analytics: {
     googleAnalyticsId: '',
-    googleSearchConsoleVerification: '',
+    googleSearchConsoleVerification: 'REfhXaG6pnK53a3U7-XFJfPqEamF7fDx1AY0_a7zviM',
     microsoftClarityId: '',
     cloudflareAnalyticsToken: '',
   },
