@@ -1,6 +1,8 @@
 ---
 import PageLayout from '../layouts/PageLayout.astro';
 import { SITE } from '../config/site.config';
+import LeadForm from '../components/LeadForm.astro';
+import FAQ from '../components/FAQ.astro';
 
 const org = SITE.organization;
 const email = org.email;
@@ -12,6 +14,34 @@ const addressLine = org.address
       .filter(Boolean)
       .join(', ')
   : null;
+
+const faqs = [
+  {
+    question: 'How quickly will I get a reply?',
+    answer:
+      'Commercial and general enquiries are answered within 2–4 hours during business hours (Monday to Saturday, 9:00–19:00 IST). Editorial matters such as corrections and tips are triaged within two business days.',
+  },
+  {
+    question: 'Who actually operates this site?',
+    answer:
+      'It is published and operated by RioCloud Solutions, a technology and digital services company based in Chandigarh, India. The same team handles enquiries sent through this form.',
+  },
+  {
+    question: 'Do you take paid placements or sponsored reviews?',
+    answer:
+      'No. We do not accept payment in exchange for a directory listing, a rating, or a review outcome. Sponsorship never influences editorial judgement — the reasoning is set out in our editorial policy.',
+  },
+  {
+    question: 'What happens to the details I submit?',
+    answer:
+      'They are emailed straight to our team so we can reply. We do not sell your details or add you to a marketing list without asking. Full detail is in the privacy policy.',
+  },
+  {
+    question: 'Can you help with a project rather than the site itself?',
+    answer:
+      'Yes. Alongside publishing, RioCloud Solutions builds and maintains websites, cloud infrastructure and search visibility for clients. Describe what you need in the form and we will tell you honestly whether we are a good fit.',
+  },
+];
 
 /** Telephone stripped to digits and `+` for a dialable href. */
 const telHref = org.telephone ? `tel:${org.telephone.replace(/[^\d+]/g, '')}` : null;
@@ -27,6 +57,12 @@ const telHref = org.telephone ? `tel:${org.telephone.replace(/[^\d+]/g, '')}` : 
     <a href={`mailto:${email}`}>{email}</a>. Use the subject-line prefixes below and your
     message gets routed to the right desk faster.
   </p>
+
+  <h2>Send us a message</h2>
+  <p>
+    Prefer a form? This goes to the same inbox and reaches a person, not an autoresponder.
+  </p>
+  <LeadForm subject="Enquiry from the contact page" class="mt-6" />
 
   <h2>Contact details</h2>
   <table>
@@ -198,4 +234,6 @@ const telHref = org.telephone ? `tel:${org.telephone.replace(/[^\d+]/g, '')}` : 
     tips, pitches and directory submissions may take longer. We read everything and reply
     to anything that needs a reply.
   </p>
+
+  <FAQ items={faqs} class="mt-12" />
 </PageLayout>
