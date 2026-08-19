@@ -107,8 +107,8 @@ export interface SiteConfig {
 export const SITE: SiteConfig = {
   name: 'AIInsider',
   shortName: 'AIInsider',
-  domain: 'aiinsider.qd.je',
-  url: 'https://aiinsider.qd.je',
+  domain: 'aiinsider.dpdns.org',
+  url: 'https://aiinsider.dpdns.org',
   tagline: 'Explore the Future of Artificial Intelligence',
   description:
     'AIInsider covers AI news, AI tools, AI agents, LLMs, automation and coding — independent analysis, hands-on tutorials and honest reviews for people who build with AI.',

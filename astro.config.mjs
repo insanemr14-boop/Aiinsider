@@ -13,7 +13,7 @@ import tailwindcss from '@tailwindcss/vite';
  * `src/config/site.config.ts` would emit mismatched canonicals.
  */
 export default defineConfig({
-  site: 'https://aiinsider.qd.je',
+  site: 'https://aiinsider.dpdns.org',
   output: 'static',
 
   build: {
