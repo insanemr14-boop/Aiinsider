@@ -2,6 +2,7 @@
 import type { GetStaticPaths } from 'astro';
 import { render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCTA from '../../components/ArticleCTA.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import CopyBlock from '../../components/CopyBlock.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
@@ -198,4 +199,5 @@ const crumbs = [
   </div>
 
   {SITE.features.newsletter && <Newsletter />}
+  <ArticleCTA title={prompt.data.title} path={`${path}/`} class="mx-auto mt-16 max-w-5xl px-4 sm:px-6" />
 </BaseLayout>
