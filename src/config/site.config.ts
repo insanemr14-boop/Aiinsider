@@ -323,3 +323,21 @@ export const CONTENT_TYPES = {
 } as const;
 
 export type ContentType = keyof typeof CONTENT_TYPES;
+
+/**
+ * End-of-article lead offer.
+ *
+ * Separate from SITE because it is commercial copy, not site identity: the
+ * articles exist to earn AdSense revenue AND to produce qualified enquiries for
+ * RioCloud Solutions, and this is the second half of that. Matched to the
+ * niche — a reader who just finished an article on AI tooling is being offered
+ * help with AI tooling, not a generic "book a call".
+ */
+export const LEAD = {
+  heading: 'Choosing an AI stack for your team?',
+  blurb:
+    'We help companies pick the right AI tools, wire them into existing systems and avoid the ones that quietly do not scale. Tell us what you are trying to build and we will tell you what we would use — no charge for the conversation.',
+  prompt: 'What are you trying to build or automate?',
+  button: 'Get a straight answer',
+  subject: 'AI stack enquiry',
+} as const;
