@@ -37,6 +37,36 @@ updatedDate: 2026-07-16
 
 Zapier's advantage was never the model — it is the integration inventory. An agent is only as useful as the actions it can take, and the ceiling on most in-house agent projects is the unglamorous work of authenticating and wiring up a dozen SaaS APIs. That work is already done here.
 
-The design trade is control. Instructions are written in prose, and the agent decides how to apply them, so behavior is shaped by prompting rather than by explicit branching. That is exactly right for a marketing operations lead and exactly wrong for a workflow where an incorrect action has financial or compliance consequences.
+## Actions are the real constraint
 
-Where it fits: lead routing, inbox triage, CRM hygiene, cross-tool notifications, and the many small internal processes that never justify an engineering ticket. When runs need auditing or self-hosting, look at a code-first or self-hostable alternative instead.
+Agent demos concentrate on reasoning because reasoning is what looks impressive. Agent deployments fail on actions, because an agent that can think brilliantly and do nothing is a chat window.
+
+Getting from thinking to doing means OAuth flows, credential storage, rate limits, pagination, error semantics that differ per vendor, and a maintenance commitment for every API that changes. For an internal team that is months of work that produces nothing anyone can demo, which is why it routinely gets underestimated and then abandons the project.
+
+Zapier has thousands of these already built and maintained, with the vendors themselves maintaining many of them. Whatever obscure tool your operations team depends on is probably already connected. That is the entire argument, and it is a strong one.
+
+## The design trade is control
+
+Instructions are written in prose, and the agent decides how to apply them, so behaviour is shaped by prompting rather than by explicit branching.
+
+That is exactly right for a marketing operations lead who wants inbound leads routed sensibly and cannot write a state machine. It is exactly wrong for a workflow where an incorrect action has financial or compliance consequences, because there is no place to put a guarantee. You cannot assert that the agent will never do X; you can only ask it not to.
+
+The practical rule: use it where the worst case of a wrong action is an awkward message someone has to correct, and do not use it where the worst case is money moving or a record being destroyed.
+
+Auditability follows the same line. Run history exists and is adequate for operational debugging; it is not the kind of trail a regulated process needs.
+
+## Where it sits against classic Zaps
+
+A Zap is a fixed sequence — this trigger, then these steps, every time. An agent is given a goal, a set of available actions, and latitude about how to combine them.
+
+The agent shape is better when the input is unstructured and the right response varies: an inbound email that might need routing, replying, logging or ignoring depending on what it says. The Zap shape is better whenever the sequence is actually fixed, which is more often than enthusiasm suggests. Choosing an agent for a deterministic process buys variability you did not want.
+
+MCP support means the action inventory can extend beyond Zapier's own connectors to external tool servers.
+
+## Where it fits
+
+Lead routing, inbox triage, CRM hygiene, cross-tool notifications, and the many small internal processes that never justify an engineering ticket. Teams without engineering capacity who need something working this week.
+
+When runs need auditing, self-hosting, or predictable per-execution cost, look at [n8n](/agents/n8n/), which trades ease of adoption for control. Teams building agentic behaviour into a product rather than into operations need a framework such as [LangGraph](/agents/langgraph/).
+
+See [AI automation for business](/articles/ai-automation-for-business/) for the wider comparison.

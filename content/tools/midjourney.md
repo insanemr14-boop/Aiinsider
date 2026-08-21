@@ -28,8 +28,44 @@ featured: true
 updatedDate: 2026-07-14
 ---
 
-Midjourney competes on taste. Given the same lazy prompt, it produces a better-looking image than almost anything else, because the model is tuned toward a specific aesthetic rather than neutral literalism. For creative work that is an advantage; for documentation diagrams it is the wrong tool.
+Midjourney is the image model that decided aesthetics were a feature rather than an emergent property, and every version since has been tuned toward a house style rather than toward neutrality.
 
-The reference systems are what separate professional use from hobby use. Style references lock a visual treatment across a series, character references hold a subject consistent between scenes, and together they turn a slot machine into something closer to art direction. Teams that skip learning them get a fraction of the value.
+## The opinionated model
 
-Two limits shape adoption. Text inside images is still unreliable, so anything with typography needs a design tool afterward. And the absence of a practical API means Midjourney sits outside automated content pipelines — you generate, you export, you move on manually.
+Ask three image generators for "a woman reading in a cafe" and Midjourney's will be the one that looks composed. Depth of field where a photographer would put it, light that falls from somewhere specific, a colour palette that holds together. The model has taste, and that taste is consistent.
+
+For anyone producing concept art, mood boards, editorial illustration or marketing imagery, this is exactly the right trade. A default that already looks intentional means fewer iterations to something usable, and the floor is much higher than models that require careful prompting to avoid looking generic.
+
+The cost of the same decision is that the style is difficult to escape. Midjourney images are recognisably Midjourney images, and after two years of saturation that is a liability for brands trying to look distinct rather than current.
+
+## Control has improved substantially
+
+The early criticism — beautiful and uncontrollable — no longer holds. Style references pin an aesthetic across a series. Character references keep a figure consistent between images, which is what made narrative and campaign work viable rather than a lottery. Region-based editing lets you fix the one wrong element instead of rerolling the entire image and losing everything that worked.
+
+Parameters for stylisation strength, aspect ratio, chaos and weirdness give real dials, and learning them is the difference between casual and professional use of the tool.
+
+## Where it still loses
+
+Text rendering remains weak. If your image needs legible words in it, this is the wrong model and no amount of prompting fixes it — composite the type afterwards.
+
+Photorealism is deliberately not the goal. Midjourney's realism is cinematic rather than documentary, and it reads as a photograph shot by someone with a very expensive camera and a strong point of view. For product photography or anything requiring the image to be unremarkable, competitors do better.
+
+Precise compositional control — this object here, that one there, at this size — is still awkward compared to tools built around layout. Midjourney interprets; it does not take dictation.
+
+And the commercial-use question needs answering by your own legal team rather than by a review. Training data provenance for image models remains contested, the licensing terms attach to your subscription tier, and "we generated it with Midjourney" is not by itself a clearance.
+
+## Pricing
+
+Subscription only, in several tiers that scale by generation volume and by whether your work is private. There is no free tier, which is unusual in the category and is a deliberate filter.
+
+For a professional producing images regularly the lowest paid tier is trivially justified. For occasional use it is harder, and the absence of a free path means you cannot properly evaluate the aesthetic fit before paying — run one month at the entry tier and decide from real output.
+
+## Who should use something else
+
+Teams needing text in images, precise layout control, or integration with an existing design workflow should look at [Adobe Firefly](/tools/adobe-firefly/), which trades aesthetic ambition for commercial safety and a place in Creative Cloud.
+
+Teams that need to self-host, fine-tune on their own material, or generate at volume through an API should use [FLUX](/tools/flux/) or another open-weights family.
+
+Teams that want image generation bundled with everything else rather than as a separate subscription will find [ChatGPT](/tools/chatgpt/) adequate for most non-specialist work.
+
+Our full comparison of the field is at [best AI image generators](/articles/best-ai-image-generators/).

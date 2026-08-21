@@ -26,8 +26,42 @@ featured: false
 updatedDate: 2026-07-06
 ---
 
-Runway's differentiator is that it was built by people who understand post-production. Competing generators optimize the prompt-to-clip path; Runway assumes you will generate something imperfect and then need to fix it, and supplies the tools for that second step.
+Runway has been in AI video since before there was a market for it, and the product shows the difference between a model with a web page and a tool built by people who understand post-production.
 
-The practical workflow most professionals settle into is image-first. Generate or design a still frame, art-direct it until the composition is right, then animate it with camera and motion controls. That sequence removes most of the randomness that makes pure text-to-video frustrating for client work.
+## A toolkit, not a generator
 
-The honest limitation is duration and continuity. Shots are short, and holding a character or environment consistent across a sequence remains the unsolved problem of the entire category. Budget for a lot of regeneration, and plan edits that hide the seams.
+The generation model is the headline, but the surrounding tooling is what working editors actually use: motion brush to direct movement in a specific region, camera controls that behave like camera controls, frame interpolation, inpainting on video, background removal, and a keyframe-driven timeline rather than a prompt box and a wait.
+
+That matters because generated video is almost never right on the first attempt, and the difference between a usable tool and a slot machine is whether you can adjust the result or only reroll it. Runway lets you adjust.
+
+Image-to-video is the mode that produces the most reliable professional output. Generate or supply a still you already approve of, then animate it. You control the composition, the model handles the motion, and the failure surface shrinks dramatically compared with text-to-video.
+
+## Where it fits in real work
+
+The honest positioning is B-roll, transitions, abstract and atmospheric shots, product motion, and concept work for pitching. Sequences where the shot is short, the subject is not a talking human, and the audience is not scrutinising continuity.
+
+For that work it is genuinely production-ready, and the economics against a shoot are not close.
+
+## The limits that have not gone away
+
+Clip length is short. Building anything longer means assembling multiple generations, and consistency across generations — the same character, the same set, the same lighting — remains the unsolved problem. Reference features help and do not solve it.
+
+Physical plausibility degrades with complexity. Simple motion looks right. Hands manipulating objects, crowds, water, fabric under stress, anything with contact and consequence — these still produce the uncanny artefacts that mark a shot as generated.
+
+Text in frame is unreliable. Fine detail flickers between frames. And prompt adherence on complex scene descriptions is weaker than in image generation, because there is simply more to get wrong.
+
+Iteration is also slow and credit-expensive in a way that changes how you work: you plan generations rather than experimenting freely, which is a different creative posture than editors are used to.
+
+## Pricing
+
+Limited free credits, then paid individual, team and enterprise tiers. Credits are consumed per generation and vary by model and length, and heavy iteration burns them faster than the plan descriptions suggest.
+
+Budget from an honest iteration count rather than a finished-clip count. A usable ten-second shot is rarely the first generation, and teams that plan as though it will be run out mid-project.
+
+## Who should choose it
+
+Editors and motion designers who want AI video inside a workflow with real controls, agencies producing short-form social and advertising content, and anyone doing concept and previsualisation work where speed beats polish.
+
+Teams whose need is a presenter delivering scripted content — training, onboarding, product explainers — should use [Synthesia](/tools/synthesia/) instead, which solves a completely different problem well. Teams that want the most impressive raw generation and can accept less control should look at [Sora](/tools/sora/).
+
+Our comparison across the category is at [best AI video tools](/articles/best-ai-video-tools/).

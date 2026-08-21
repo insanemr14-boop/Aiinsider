@@ -27,8 +27,38 @@ featured: false
 updatedDate: 2026-07-16
 ---
 
-Copilot's advantage is positional. It lives where code review, issues and CI already happen, which means an agent that opens a pull request inherits your branch protections, required checks and reviewer rules for free. Competing tools have to reinvent that integration or ask you to work outside it.
+GitHub Copilot is the default rather than the frontier, and for a large number of teams that is exactly the right thing to buy. It lives where developers already are, bills the way procurement already understands, and requires no one to change editors.
 
-On pure editing quality it is no longer the leader. Tools built as AI-native editors retrieve context more aggressively and handle multi-file refactors with less supervision. Copilot's inline completion remains excellent for line-level and function-level work, but it more often needs the file opened in front of it.
+## The distribution advantage is the product
 
-For buyers, the decision usually comes down to whether you are optimizing the individual developer's inner loop or the organization's software delivery process. Copilot is stronger on the second; specialized editors are stronger on the first, and many teams end up paying for both.
+Copilot's competitors generally do one thing better. What none of them match is reach: it runs in VS Code, Visual Studio, the JetBrains suite, Neovim, Xcode, and the GitHub web interface, with a single licence and a single admin surface. For an engineering organisation of any size, "works in whatever editor each team already chose" is worth more than a few percentage points of suggestion quality.
+
+The same logic applies to procurement. Copilot arrives through an existing GitHub relationship with an existing data processing agreement, existing SSO, and existing seat management. Adopting it is an amendment; adopting a new vendor is a project.
+
+## What it does well
+
+Inline completion remains the core, and it is genuinely good at the middle of the distribution: boilerplate, obvious next lines, test scaffolding, the tedious half of a function whose shape you already know. The value is small per instance and large in aggregate.
+
+Copilot Chat handles the "explain this" and "why is this failing" cases without leaving the editor, which removes a context switch that used to cost more than the answer.
+
+The agent and code-review features are the newer surface and the more interesting one. Assigning an issue and getting a draft pull request works well for small, well-described changes — dependency bumps, a missing validation, a straightforward bug with a reproduction. Automated review comments on pull requests catch a real fraction of the obvious findings before a human looks.
+
+## Where it falls short
+
+Repository awareness is the persistent gap. Copilot sees your open files and some retrieved context, but it does not build the kind of index that editor-native competitors do, and on a large codebase it shows: suggestions that are correct in isolation and wrong for your conventions, or that reimplement a helper that already exists three directories over.
+
+Agent mode is meaningfully less capable than dedicated agentic tools on multi-file work. It is fine for a bounded change and unreliable for a refactor that spans modules.
+
+And suggestion quality varies by language in a way the marketing does not mention. On Python, TypeScript and Go it is strong, because that is what the training distribution is full of. On a less common language, or an internal DSL, it degrades sharply — and degrades by producing confident wrong code rather than by declining.
+
+## Pricing and the real decision
+
+There is a free tier with monthly completion and chat limits, which is enough to evaluate and enough for light individual use. Paid individual, business and enterprise seats add higher limits, policy controls, and — on the business tiers — the ability to exclude specified repositories and files from being used as context.
+
+The seat price is predictable, which is its own feature. Unlike usage-billed competitors, a hundred Copilot seats cost what a hundred Copilot seats cost, regardless of how enthusiastically anyone uses agent mode. For finance, that predictability is often the deciding argument.
+
+## Who should buy something else
+
+Teams whose main pain is large-codebase work, where retrieval quality determines whether suggestions are usable, will get more from [Cursor](/tools/cursor/). Teams that want an agent driving the test suite rather than the editor should look at [Claude Code](/tools/claude-code/). Anyone who needs model choice — including self-hosted weights for code that cannot leave the network — needs [Aider](/tools/aider/) or a comparable open tool.
+
+The honest framing: Copilot is the safe institutional choice, and buying the safe choice is frequently correct. Just do not buy it expecting the frontier. Our [best AI coding assistants](/articles/best-ai-coding-assistants/) comparison sets it against the alternatives in detail.

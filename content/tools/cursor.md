@@ -29,6 +29,36 @@ updatedDate: 2026-07-25
 
 Cursor's insight was that AI coding assistance is an editor problem, not a plugin problem. Autocomplete extensions bolt suggestions onto an interface designed for typing; Cursor rebuilt the interaction model around describing a change and reviewing a diff.
 
-The codebase index is what makes that work. Because the editor retrieves relevant files before generating, suggestions inherit your existing patterns rather than generic idioms from training data. On a mature repository the difference is obvious within an hour.
+## How the codebase index changes the output
 
-Two caveats matter for team adoption. First, retrieval quality falls off on very large monorepos, and the failure mode is silent — you get a confident change built on the wrong context. Second, the usage-based component of pricing means a team of heavy agent users can post a bill several times the headline seat cost. Instrument usage during the pilot and forecast from real numbers.
+The index is what separates Cursor from a chat window with your file pasted into it. Before generating, the editor retrieves the files most likely to matter — the module you are editing, its tests, the interfaces it implements, recent related changes. The model therefore writes in your idioms: your error-handling convention, your naming, your preferred way of wiring dependencies, rather than the average of everything in its training data.
+
+On a greenfield project this is a modest convenience. On a mature repository with ten years of accumulated convention, it is the whole product. The difference shows up within an hour of real use: generic assistants suggest code that works and looks foreign, Cursor suggests code that a reviewer would not flag.
+
+## The three modes, and when each is right
+
+Tab completion is the low-stakes surface — inline, multi-line, and aware of what you just edited. It is the mode that produces the smallest wins most reliably.
+
+Inline edit (Cmd+K) is for a scoped change you can describe in a sentence: convert this to async, extract this into a helper, add the missing error branch. Because the scope is a selection, the blast radius is bounded and the review is trivial.
+
+Agent mode is where the leverage and the risk both live. It plans across files, writes, runs commands, and iterates. Given a well-specified task with a fast test loop, it produces genuinely reviewable work. Given a vague one, it produces a large diff touching files you did not expect, and the review cost exceeds what you saved.
+
+The practical rule: the more autonomy you grant, the more precisely the task must be specified. Agent mode rewards a written spec and punishes a hunch.
+
+## Where retrieval quality falls off
+
+The failure mode worth internalising is silent. On very large monorepos, retrieval starts surfacing the wrong context — a similarly named module from an unrelated service, an old implementation that still compiles. The model then generates a confident, coherent change built on a false premise. Nothing errors. The diff looks plausible.
+
+Mitigations that work: reference files explicitly with `@` rather than trusting automatic retrieval on unfamiliar code, keep `.cursorrules` current so conventions are stated rather than inferred, and treat any agent diff that touches more files than you expected as a signal to re-read rather than approve.
+
+## What it actually costs
+
+The headline seat price is not the number to plan around. Cursor's pricing carries a usage-based component, and agent mode consumes it quickly — long-context requests against a large repository are expensive, and a developer who lives in agent mode can post several times the base seat cost.
+
+This is not a criticism of the pricing, which is honest about the mechanism, but it is a budgeting trap. Run a two-week pilot with the engineers most likely to be heavy users, read the actual usage numbers, and forecast from those. Teams that extrapolate from the seat price get an unpleasant surprise in month two.
+
+## Who should look elsewhere
+
+Developers who are happy in their current editor and want a modest lift will get most of the benefit from [GitHub Copilot](/tools/github-copilot/) at lower cost and zero migration. Teams that work primarily in the terminal, or that want the agent driving the test runner rather than the editor, will find [Claude Code](/tools/claude-code/) a better shape. Anyone whose constraint is regulatory — code that cannot leave the building — needs a self-hosted model, which rules out the hosted editors entirely.
+
+For the direct comparison against its closest competitor, see our [Cursor vs Windsurf](/articles/cursor-vs-windsurf/) breakdown.

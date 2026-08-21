@@ -37,6 +37,38 @@ updatedDate: 2026-07-08
 
 The plan step is the design decision worth studying. Most research agents commit to an interpretation of your question silently, and you discover the misread only in the finished report. Gemini surfaces that interpretation as an editable list of sub-questions first.
 
-Everything after that is a fairly standard browse-read-synthesize loop, distinguished mainly by context length. Because the model can hold a large volume of retrieved text at once, the synthesis stage compares sources against each other rather than summarizing them one at a time — which shows up as better handling of topics where sources conflict.
+## Why an editable plan changes the failure mode
 
-Where it fits: scoping an unfamiliar domain, literature-style surveys, and briefing documents destined for Google Docs. For claim-by-claim verifiability, a more citation-dense agent is the better tool. See [Gemini vs Claude](/articles/gemini-vs-claude/) for how the underlying models compare.
+Research agents fail expensively. A run that spends fifteen minutes and several hundred sources answering a question adjacent to the one you asked has wasted the time and produced something worse than nothing, because a plausible report on the wrong question invites you to act on it.
+
+Making the plan visible and editable moves that failure from the end of the run to the beginning, where it costs thirty seconds to fix. You read the sub-questions, notice that it has interpreted "market size" as global rather than the segment you meant, correct it, and proceed.
+
+This is a small interface decision with an outsized effect on usefulness, and it is the main reason to prefer this agent for scoping work where you are not yet sure the question is well-formed.
+
+## Long context as the synthesis advantage
+
+Everything after the plan is a fairly standard browse-read-synthesise loop, distinguished mainly by context length. Because the model can hold a large volume of retrieved text at once, the synthesis stage compares sources against each other rather than summarising them one at a time.
+
+That shows up concretely as better handling of topics where sources conflict. An agent that summarises sequentially tends to report the last thing it read, or to average positions into a bland consensus. One that holds them together can say that two sources disagree and characterise the disagreement — which is usually the most valuable sentence in a research brief.
+
+Output lands in Google Docs, which for organisations already working there removes the export step entirely.
+
+## Where it is weaker
+
+Citation density is lower than the alternatives. Sources are listed and claims are attributable in a general way, but tracing a specific number back to a specific passage is harder here than in a citation-dense agent. For work that will be challenged — regulatory, legal, financial — that is the wrong trade.
+
+Source discrimination is the standing weakness of the whole category and applies here. The agent finds material well and weighs it poorly, so commercial content optimised to rank can sit beside primary sources with no signal distinguishing them.
+
+And the depth is bounded by the retrieval rather than the reasoning. On topics where the good material is behind paywalls, in PDFs that resist extraction, or simply not on the open web, the report is confidently built on whatever was reachable.
+
+## Access
+
+Available on the free tier with limits, with higher quotas on paid Google AI plans. The free allocation is generous enough for genuine evaluation, which is worth taking advantage of before choosing between this and the alternatives — the two mainstream research agents differ enough in output shape that preference is best settled empirically.
+
+## Where it fits
+
+Scoping an unfamiliar domain, literature-style surveys, competitive landscape work, and briefing documents destined for Google Docs. Situations where you want to check that the agent understood the question before it spends fifteen minutes on it.
+
+For claim-by-claim verifiability, [Perplexity Deep Research](/agents/perplexity-deep-research/) is the more citation-dense tool. For research strictly grounded in your own documents rather than the open web, a corpus-bound tool is the right shape instead.
+
+See [Gemini vs Claude](/articles/gemini-vs-claude/) for how the underlying models compare.

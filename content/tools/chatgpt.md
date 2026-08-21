@@ -27,8 +27,40 @@ featured: true
 updatedDate: 2026-07-20
 ---
 
-ChatGPT is the reference point most people use to judge every other assistant, which is both its advantage and its problem. The advantage is coverage: almost any task you can describe has a supported path, and the ecosystem of custom GPTs, connectors and third-party integrations is larger than any competitor's.
+ChatGPT is the product that made the category legible to everyone else, and it still carries the advantages that come with being first: the largest ecosystem, the most third-party integrations, and a set of interface conventions that every competitor has since copied.
 
-The problem is that breadth makes the product harder to reason about. Which model answers your question, how much context it retains, and what quota you are burning are all decisions the interface makes on your behalf. Power users tend to notice this first on long analytical sessions, where a silent model downgrade changes answer quality without explanation.
+## What you are actually buying
 
-For evaluation purposes, treat ChatGPT as the baseline rather than the answer. Run your real workload through it, then test whether a narrower tool — a coding-specific assistant, a research engine, a retrieval stack — does that one job materially better. Often it does.
+The chat window is the smallest part of it. The paid product is a bundle: multiple models with different speed and reasoning trade-offs, web browsing, code execution in a sandbox, image generation, file and image understanding, voice, memory across conversations, and custom GPTs that package a system prompt and a set of files into something shareable.
+
+That breadth is the honest reason to choose it. For a person who does not want to assemble a toolchain — who wants one subscription that handles drafting, analysis, a spreadsheet, a diagram and a quick script — nothing else is as complete in a single place.
+
+The code interpreter is the most underrated component. Upload a messy CSV and ask a question and it writes and runs Python against the actual file rather than guessing from a sample. For analysts, that single feature justifies the subscription independently of everything else.
+
+## Where it is genuinely strong
+
+Breadth of task, speed of iteration, and recovery from vague instructions. Give ChatGPT an underspecified request and it produces something usable and asks a clarifying question, which is the right behaviour for exploratory work.
+
+The ecosystem compounds this. Whatever workflow you are building, someone has written an integration, and the API that sits behind the consumer product is the most widely supported in the industry.
+
+## Where it is weaker than the marketing implies
+
+Long-form writing quality is a real gap. ChatGPT's default register — the confident summary, the tidy three-point structure, the closing paragraph that restates the opening — is recognisable enough that readers now identify it on sight. It can be prompted out of this, but it takes deliberate work, and competitors need less of it.
+
+Instruction adherence over long documents degrades. Constraints given at the top of a lengthy task tend to be honoured for the first section and quietly relaxed later, which matters when the constraint was the point.
+
+The model picker is a persistent usability problem. Multiple models with overlapping names, different capabilities and different limits, and no clear guidance about which to use when — most users pick one and never revisit, which often means using the wrong one for months.
+
+## Pricing shape
+
+A free tier with limited access to the better models, paid individual plans, and team and enterprise tiers that add administration, shared workspaces and data controls. API billing is separate and usage-based.
+
+The individual paid tier is straightforward value for anyone using it daily. The enterprise decision is more nuanced and usually turns on data handling rather than capability: what is retained, what is used for training, and whether that survives your legal team's review. Get that answered before the pilot, not after.
+
+## Who should use something else
+
+For sustained writing and careful instruction-following on long documents, [Claude](/tools/claude/) is the better instrument. For research questions where you need sources attached to claims, [Perplexity](/tools/perplexity/) is built for the job and ChatGPT's browsing is a weaker substitute. For teams already deep in Google Workspace, [Gemini](/tools/gemini/) removes an integration problem. For cost-sensitive API work at volume, [DeepSeek](/tools/deepseek/) and other open-weight options are dramatically cheaper.
+
+None of that makes ChatGPT the wrong default. It makes it a general-purpose tool in a market that increasingly rewards specialists — which is the ordinary fate of a product that got there first and stayed broad.
+
+Our fuller explainer covers the model line-up and features in detail: [what is ChatGPT](/articles/what-is-chatgpt/), and the head-to-head is in [Claude vs ChatGPT](/articles/claude-vs-chatgpt/).

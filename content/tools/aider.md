@@ -27,8 +27,40 @@ featured: false
 updatedDate: 2026-06-28
 ---
 
-Aider is the tool that proves how much of the AI coding experience is packaging. The core loop — build a map of the repo, send relevant context, apply a diff, commit it — is straightforward, and doing it in the open makes the mechanics legible in a way commercial editors do not.
+Aider is what a coding agent looks like when nobody is trying to sell you a subscription. It is a terminal program, it is open source, it speaks to whatever model you point it at, and it treats Git as the substrate rather than as an afterthought.
 
-The git integration is the part worth copying. Because each accepted change is a real commit, reviewing an agent session is just reading history, and undoing a bad run is a revert. That is a materially better audit story than editors that mutate your working tree and ask you to sort it out.
+## Git as the interface
 
-It is not a drop-in replacement for a commercial AI IDE. There is no index tuned on your monorepo, no support escalation and no polished onboarding. What there is instead is control: your model, your data path, your costs, and source you can read when something behaves oddly.
+Every change Aider makes lands as a commit. Not a staged diff waiting for approval, not a proposal in a side panel — a commit, with a message describing what it did.
+
+This sounds like a small design choice and is actually the central one. It means undo is `git reset`, review is `git diff`, and history is the audit log. It means an agent session that goes wrong is recoverable with tools you already trust, rather than with the tool's own bookkeeping. And it means Aider composes with everything downstream: your hooks, your CI, your branch protection.
+
+Teams that have been burned by agents making sweeping unreviewable changes tend to find this reassuring in a way that is hard to appreciate before the first bad session.
+
+## Model independence is the other half
+
+Aider is not tied to a vendor. Connect it to a frontier API, a cheaper mid-tier model, or a local model served on your own hardware, and switch when the economics or the requirements change.
+
+Two situations make this decisive. The first is regulated or sensitive work, where source code cannot leave the network — Aider plus a self-hosted model is one of the few genuinely viable agentic options. The second is cost control: routing routine mechanical edits to a cheap model and reserving an expensive one for the hard problems is straightforward here and impossible in a closed product.
+
+The repository map deserves a mention too. Rather than dumping files into context, Aider builds a compact structural summary of the codebase and sends that, which keeps token use sane on repositories large enough that naive context-stuffing would be unaffordable.
+
+## The cost of no product team
+
+The interface is a terminal. There is no diff viewer, no click-to-approve, no visual indication of what the agent is about to touch beyond what it tells you. For developers who live in the shell this is fine or better than fine. For everyone else it is a wall.
+
+Configuration is likewise a text file and a set of flags rather than a settings pane, and the good defaults are the ones you discover after reading the documentation properly. There is a real setup cost before the tool is doing its best work.
+
+Capability also tracks the model you attach. Aider with a weak model is a weak agent, and the tool does not compensate. Evaluations of "Aider" that do not name the model behind it are not telling you anything useful.
+
+## What it costs
+
+The tool is free and open source. You pay only for model API usage, which is the honest version of a pricing page.
+
+That makes the total cost entirely dependent on your choices: a frontier model on a large repository is not cheap, a mid-tier model on scoped tasks is very cheap, and a local model on hardware you already own is free at the margin. For individuals and small teams this frequently works out well below a seat-priced competitor. For a large organisation, the absence of centralised seat management and policy controls is a genuine administrative cost that offsets some of the saving.
+
+## Who it is for
+
+Developers comfortable in a terminal who want control over model choice, cost and history. Teams with a hard requirement that code stays on their infrastructure. Anyone who wants to understand what an agent is doing rather than trust a UI to summarise it.
+
+Everyone else is better served by [Cursor](/tools/cursor/) if they want an editor, [Claude Code](/tools/claude-code/) if they want a polished terminal agent and do not need model portability, or [GitHub Copilot](/tools/github-copilot/) if institutional simplicity matters most. See [best AI coding assistants](/articles/best-ai-coding-assistants/) for the full field.

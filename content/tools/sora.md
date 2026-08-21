@@ -27,8 +27,42 @@ featured: false
 updatedDate: 2026-07-02
 ---
 
-Sora's technical achievement and its product design point in different directions. The generation quality — particularly motion, physics and audio synchronization — is at the front of the field. The packaging, a feed-based app built around remixing other people's clips, targets consumers rather than production teams.
+Sora's launch moved the conversation about AI video from "when" to "now", and the gap between what it demonstrates and what it reliably delivers remains the most interesting thing about it.
 
-That matters when you evaluate it against Runway or similar tools. Sora will usually give you a better single clip. It will not give you the masking, camera control and cleanup tools you need to turn ten imperfect clips into a finished thirty seconds.
+## What it does better than anything else
 
-Content policy is the other planning variable. Restrictions around real people, recognizable characters and a broad set of sensitive categories are enforced tightly, and the rules have changed more than once under public pressure. For commercial work, verify that your use case is permitted before building a campaign around it.
+Physical coherence over a sustained shot. Sora's generations hold together in ways that competitors' do not — objects stay solid, motion carries momentum, and scenes maintain internal logic across seconds rather than fractions of them. The model appears to have learned something closer to how things behave than how they look frame to frame.
+
+Prompt adherence on complex scene descriptions is also strong. Specify a setting, a subject, a camera move and a mood, and the result usually contains all four rather than an averaged impression of them.
+
+For a certain kind of shot — atmospheric, cinematic, no scrutinised human performance — the output is the best available.
+
+## The controllability gap
+
+This is where the evaluation turns. Sora is closer to a generator than a tool. Compared with [Runway](/tools/runway/), there is far less machinery for directing a result you nearly like toward the one you want: fewer regional controls, less timeline manipulation, less ability to fix one element without regenerating the whole thing.
+
+For a director with a specific shot in mind, that means iterating by prompt — which is a slow, expensive and imprecise way to converge on a target. Professionals often find a less impressive model with better controls produces finished work faster.
+
+Consistency across clips remains unsolved here as everywhere. Two generations of the same character are two different people wearing similar clothes.
+
+## The other constraints
+
+Access and limits vary by tier and region, and availability has been staged rather than universal. Generation is slow enough that iteration is a planning problem rather than a creative one.
+
+Content restrictions are more aggressive than competitors'. Public figures, recognisable brands, and a wide interpretation of sensitive content are blocked, and the boundary is not always predictable — a prompt that worked yesterday can be refused today. For commercial production with a deadline, unpredictable refusal is a scheduling risk.
+
+Rights and provenance questions around training data apply here as to every model in the category, and remain a matter for your own legal advice rather than a product review.
+
+## Pricing
+
+Limited free generation, with higher limits attached to paid ChatGPT tiers rather than sold as a standalone subscription. That bundling makes it cheap to try and awkward to scale — there is no straightforward path to "we need a lot of this for a client project" the way there is with credit-based competitors.
+
+For individuals already paying for ChatGPT, the marginal cost is zero and it is worth using. For a production team, the access model is the constraint rather than the price.
+
+## Who should choose it
+
+People who want the most impressive raw generation available, individuals already inside the ChatGPT subscription, and anyone doing concept work where a striking result matters more than an exact one.
+
+Production teams needing control, iteration speed and integration into an editing workflow should use [Runway](/tools/runway/). Teams making presenter-led corporate video should use [Synthesia](/tools/synthesia/), which is not really a competitor so much as a different category.
+
+The full comparison is at [best AI video tools](/articles/best-ai-video-tools/).
