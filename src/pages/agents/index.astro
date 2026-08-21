@@ -16,6 +16,7 @@ import {
 } from '../../lib/directory';
 import { breadcrumbSchema, collectionPageSchema } from '../../lib/schema';
 import { SITE } from '../../config/site.config';
+import ArticleCTA from '../../components/ArticleCTA.astro';
 
 const agents = await getAgents();
 const groups = groupByCategory(agents);
@@ -124,4 +125,6 @@ const crumbs = [
   </div>
 
   {SITE.features.newsletter && <Newsletter />}
+
+  <ArticleCTA title="AI Agents Directory" path={Astro.url.pathname} class="mt-16" />
 </BaseLayout>

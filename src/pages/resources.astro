@@ -15,6 +15,7 @@ import { getPublishedArticles, getAllTags } from '../lib/articles';
 import { CATEGORIES, CATEGORY_GROUPS } from '../config/categories';
 import { breadcrumbSchema, webPageSchema } from '../lib/schema';
 import { SITE, CONTENT_TYPES } from '../config/site.config';
+import ArticleCTA from '../components/ArticleCTA.astro';
 
 const [tools, agents, prompts, articles, tags] = await Promise.all([
   getTools(),
@@ -245,4 +246,6 @@ const READING = [
   </div>
 
   {SITE.features.newsletter && <Newsletter />}
+
+  <ArticleCTA title="Resources" path={Astro.url.pathname} class="mt-16" />
 </BaseLayout>

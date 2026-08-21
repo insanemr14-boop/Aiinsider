@@ -13,6 +13,7 @@ import Newsletter from '../../components/Newsletter.astro';
 import { getPrompts, groupByCategory, categoryFacets, promptUrl } from '../../lib/directory';
 import { breadcrumbSchema, collectionPageSchema } from '../../lib/schema';
 import { SITE } from '../../config/site.config';
+import ArticleCTA from '../../components/ArticleCTA.astro';
 
 const prompts = await getPrompts();
 const groups = groupByCategory(prompts);
@@ -139,4 +140,6 @@ const crumbs = [
   </div>
 
   {SITE.features.newsletter && <Newsletter />}
+
+  <ArticleCTA title="Prompt Library" path={Astro.url.pathname} class="mt-16" />
 </BaseLayout>

@@ -4,6 +4,7 @@ import { AUTHORS } from '../config/authors';
 import { CATEGORIES } from '../config/categories';
 import { SITE } from '../config/site.config';
 import { getPublishedArticles } from '../lib/articles';
+import ArticleCTA from '../components/ArticleCTA.astro';
 
 const articles = await getPublishedArticles();
 ---
@@ -137,4 +138,6 @@ const articles = await getPublishedArticles();
     <a href="/categories/">category</a> or <a href="/tags/">topic</a>, or use
     <a href="/search/">search</a> if you know what you are looking for.
   </p>
+
+  <ArticleCTA title="About" path={Astro.url.pathname} class="mt-16" />
 </PageLayout>

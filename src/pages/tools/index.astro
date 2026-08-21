@@ -19,6 +19,7 @@ import {
 } from '../../lib/directory';
 import { breadcrumbSchema, collectionPageSchema } from '../../lib/schema';
 import { SITE } from '../../config/site.config';
+import ArticleCTA from '../../components/ArticleCTA.astro';
 
 const tools = await getTools();
 const groups = groupByCategory(tools);
@@ -126,4 +127,6 @@ const crumbs = [
   </div>
 
   {SITE.features.newsletter && <Newsletter />}
+
+  <ArticleCTA title="AI Tools Directory" path={Astro.url.pathname} class="mt-16" />
 </BaseLayout>

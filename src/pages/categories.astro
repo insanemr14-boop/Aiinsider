@@ -6,6 +6,7 @@ import { CATEGORIES, CATEGORY_GROUPS } from '../config/categories';
 import { getCategoryCounts } from '../lib/articles';
 import { breadcrumbSchema, collectionPageSchema } from '../lib/schema';
 import { SITE } from '../config/site.config';
+import ArticleCTA from '../components/ArticleCTA.astro';
 
 const counts = await getCategoryCounts();
 
@@ -75,4 +76,6 @@ const crumbs = [
       }
     </div>
   </div>
+
+  <ArticleCTA title="Categories" path={Astro.url.pathname} class="mt-16" />
 </BaseLayout>
