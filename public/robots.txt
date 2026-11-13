@@ -1,4 +1,4 @@
-# https://aiinsider.qd.je/robots.txt
+# https://aiinsider.dpdns.org/robots.txt
 
 User-agent: *
 Allow: /
@@ -47,4 +47,4 @@ Crawl-delay: 10
 User-agent: MJ12bot
 Disallow: /
 
-Sitemap: https://aiinsider.qd.je/sitemap.xml
+Sitemap: https://aiinsider.dpdns.org/sitemap.xml
