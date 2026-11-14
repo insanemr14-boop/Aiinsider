@@ -1,6 +1,6 @@
 ---
 title: "SpaceX, Starship and AI in Orbit: Why Data Centers Are Heading to Space"
-description: "SpaceX owns xAI, has filed for up to a million data center satellites, and is attempting its first double Starship catch. How the pieces fit, and whether computing in orbit can work."
+description: "SpaceX owns xAI, has filed for up to a million data center satellites, and has flown its first double-catch Starship test. How the pieces fit, and whether computing in orbit can work."
 excerpt: "SpaceX is betting that the cheapest place to run AI will eventually be orbit. The plan depends on Starship becoming fully reusable, which is what this week's test flight is about."
 seoTitle: "SpaceX Orbital AI Data Centers and Starship Flight 15 Explained"
 seoDescription: "SpaceX's plan for AI data centers in orbit: the xAI merger, the million-satellite filing, Starship Flight 15's double catch attempt, and the engineering problems."
@@ -9,6 +9,7 @@ category: ai-news
 tags: ["spacex", "starship", "xai", "orbital-data-centers", "ai-infrastructure", "ai-news"]
 type: analysis
 publishDate: 2026-11-13
+updatedDate: 2026-11-14
 featured: false
 editorsPick: false
 trending: true
@@ -26,7 +27,7 @@ faq:
     answer: "Continuous solar power and no need for land, water or grid connections. Those are exactly the limits slowing data center construction on Earth."
 ---
 
-Three things that sound unrelated are now one strategy. SpaceX owns an AI company. It has asked regulators for permission to launch up to a million satellites that would act as data centers. And this week it is attempting to catch both stages of its Starship rocket for the first time.
+Three things that sound unrelated are now one strategy. SpaceX owns an AI company. It has asked regulators for permission to launch up to a million satellites that would act as data centers. And this week it attempted to catch both stages of its Starship rocket for the first time.
 
 Together they amount to a bet that the cheapest place to run AI will eventually be orbit. This article explains the plan and the problems.
 
@@ -56,12 +57,22 @@ Building a large data center now means waiting years for a grid connection and n
 
 The whole idea depends on the cost of getting mass to orbit. Computing hardware, solar panels and radiators are heavy. At historical launch prices, orbital data centers make no economic sense.
 
-Starship is meant to change that by being **fully and rapidly reusable**, like an aircraft. That is the significance of **Flight 15**, scheduled for 13 November 2026 from Starbase in Texas. It is the first attempt to catch both stages:
+Starship is meant to change that by being **fully and rapidly reusable**, like an aircraft. That is the significance of **Flight 15**, which launched on 13 November 2026 from Starbase in Texas. It was the first attempt to catch both stages:
 
 1. The **Super Heavy booster**, caught by the launch tower minutes after liftoff.
 2. The **upper stage**, caught roughly 22 hours later after several orbits of the Earth.
 
-SpaceX has caught boosters before, though reports note it has not yet caught one of its latest version. It has never caught an upper stage. At the time of writing the flight had not yet taken place, so treat the outcome as unknown. A failure would be normal for a test programme. A success would be the strongest evidence yet that full reuse is achievable.
+SpaceX has caught boosters before, though it had not yet caught one of its latest version. It has never caught an upper stage.
+
+### Update, 14 November: what happened on Flight 15
+
+The flight launched on 13 November with mixed results:
+
+- **Booster: no catch.** The Super Heavy booster called off its return to the tower and came down in the Gulf of Mexico instead. Webcast commentary attributed the abort to a guidance and navigation problem detected by the booster. SpaceX had not given a detailed explanation at the time of this update.
+- **Upper stage: reached orbit.** The ship reached orbit and released 26 Starlink satellites.
+- **Ship catch: pending.** The attempt to catch the upper stage at the launch site was scheduled for 14 November. Its outcome was not known when this update was written.
+
+Missing the booster means the first full recovery of both stages will have to wait for a later flight. That is a setback for the timetable, not for the idea: an abort to a safe splashdown is the system working as designed, and reaching orbit with a payload is progress. For the orbital data center plan, though, the cost case depends on catching and reusing both stages routinely, and that has not been shown yet.
 
 ## What are the hard problems?
 
@@ -91,4 +102,5 @@ Either way, watch the rocket, not the announcements. The business case for AI in
 
 - [SpaceX Acquires xAI to Pursue Orbital Data Center Constellation, Via Satellite](https://www.satellitetoday.com/connectivity/2026/02/02/spacex-acquires-xai-to-pursue-orbital-data-center-constellation/)
 - [SpaceX files for million satellite orbital AI data center megaconstellation, Data Center Dynamics](https://www.datacenterdynamics.com/en/news/spacex-files-for-million-satellite-orbital-ai-data-center-megaconstellation/)
-- [SpaceX Starship Flight 15: first double catch attempt, Space.com](https://www.space.com/space-exploration/launches-spacecraft/spacex-starship-flight-15-1st-booster-ship-double-catch-full-recovery-what-time)
+- [SpaceX launches Starship Flight 15 but aborts booster catch, Space.com](https://www.space.com/space-exploration/launches-spacecraft/spacex-starship-flight-15-chopsticks-double-catch-super-heavy-ship)
+- [SpaceX aborts Starship booster catch, but the ship is still in orbit, The Next Web](https://thenextweb.com/news/spacex-starship-flight-15-booster-catch-aborted)
